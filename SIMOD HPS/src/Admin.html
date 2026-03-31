@@ -1,0 +1,439 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SIMOD HPS - Admin</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-1: #f5f7ff;
+        --bg-2: #eef7f3;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --line: #dbe2ef;
+        --brand: #0f766e;
+        --brand-strong: #115e59;
+        --accent: #1d4ed8;
+        --warning: #92400e;
+        --danger: #b91c1c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(900px 500px at -10% -20%, #d9edff 0%, transparent 55%),
+          radial-gradient(900px 500px at 110% -20%, #d7f8e9 0%, transparent 55%),
+          linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      }
+
+      .container {
+        width: min(1250px, 92vw);
+        margin: 32px auto;
+        display: grid;
+        gap: 16px;
+      }
+
+      .header,
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+      }
+
+      .header,
+      .card {
+        padding: 18px;
+      }
+
+      .title {
+        margin: 0;
+        font-size: clamp(22px, 3.5vw, 34px);
+      }
+
+      .subtitle,
+      .hint {
+        color: var(--muted);
+      }
+
+      .nav {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .nav a,
+      .btn {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 14px;
+        text-decoration: none;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.1fr 0.9fr;
+        }
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      @media (max-width: 720px) {
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .stat {
+        background: #f8fafc;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+      }
+
+      .label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .value {
+        margin-top: 6px;
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .status {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .status.ready {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .status.error {
+        background: #fee2e2;
+        color: var(--danger);
+      }
+
+      .stack {
+        display: grid;
+        gap: 10px;
+      }
+
+      .key-value {
+        display: grid;
+        gap: 10px;
+      }
+
+      .row {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fbfdff;
+      }
+
+      .row strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        word-break: break-all;
+      }
+
+      .message {
+        margin-top: 8px;
+        font-size: 13px;
+      }
+
+      .message.error {
+        color: var(--danger);
+      }
+
+      .message.ok {
+        color: var(--brand-strong);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        font-size: 12px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .empty {
+        padding: 20px;
+        text-align: center;
+        color: var(--muted);
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <section class="header">
+        <h1 class="title">SIMOD HPS - Admin</h1>
+        <p class="subtitle">Monitor konfigurasi Apps Script, akses data, dan ringkasan isi spreadsheet dari satu deployment.</p>
+        <div class="nav">
+          <a class="btn" id="userUiBtn" href="<?= userUiUrl ?>" target="_top" rel="noopener noreferrer">Buka UI User</a>
+          <a class="btn" id="adminUiBtn" href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">Reload Admin</a>
+          <button class="btn primary" id="refreshBtn" type="button">Refresh Data</button>
+        </div>
+        <div id="topMessage" class="message"></div>
+      </section>
+
+      <section class="card">
+        <div class="stats">
+          <div class="stat">
+            <div class="label">Total Pendidikan</div>
+            <div class="value" id="statEvents">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">Total HPS</div>
+            <div class="value" id="statHps">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">READY</div>
+            <div class="value" id="statReady">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">DRAFT</div>
+            <div class="value" id="statDraft">0</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Konfigurasi</h2>
+          <div class="stack key-value" id="configWrap"></div>
+        </div>
+
+        <div class="card">
+          <h2>Akses</h2>
+          <div class="stack key-value" id="authWrap"></div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Daftar Pendidikan</h2>
+          <div id="eventsWrap"></div>
+        </div>
+
+        <div class="card">
+          <h2>5 HPS Terbaru</h2>
+          <div id="packagesWrap"></div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      document.getElementById("refreshBtn").addEventListener("click", refreshAdminData);
+      refreshAdminData();
+
+      function refreshAdminData() {
+        setTopMessage("Memuat data admin...", false);
+        google.script.run
+          .withSuccessHandler((data) => {
+            setTopMessage("", false);
+            renderStats(data.stats || {});
+            renderConfig(data.config || {});
+            renderAuth(data.auth || {});
+            renderEvents(data.events || []);
+            renderPackages(data.packages || []);
+          })
+          .withFailureHandler((err) => {
+            const msg = err && err.message ? err.message : String(err || "Unknown error");
+            setTopMessage(msg, true);
+          })
+          .getAdminBootstrapData();
+      }
+
+      function renderStats(stats) {
+        document.getElementById("statEvents").textContent = stats.totalEvents || 0;
+        document.getElementById("statHps").textContent = stats.totalHps || 0;
+        document.getElementById("statReady").textContent = stats.readyHps || 0;
+        document.getElementById("statDraft").textContent = stats.draftHps || 0;
+      }
+
+      function renderConfig(config) {
+        const rows = [
+          buildConfigRow("Static Sheet ID", config.staticSheetId || "-", config.spreadsheetStatus, config.spreadsheetMessage),
+          buildConfigRow("Static Drive Folder ID", config.staticDriveFolderId || "-", config.driveStatus, config.driveMessage),
+          buildConfigRow("Effective Sheet ID", config.effectiveSheetId || "-", config.spreadsheetStatus, ""),
+          buildConfigRow("Effective Drive Folder ID", config.effectiveDriveFolderId || "-", config.driveStatus, "")
+        ];
+        document.getElementById("configWrap").innerHTML = rows.join("");
+      }
+
+      function buildConfigRow(label, value, status, message) {
+        const statusClass = status === "READY" ? "ready" : "error";
+        return `
+          <div class="row">
+            <strong>${escapeHtml(label)}</strong>
+            <div class="mono">${escapeHtml(value)}</div>
+            <div style="margin-top:8px;">
+              <span class="status ${statusClass}">${escapeHtml(status || "UNKNOWN")}</span>
+            </div>
+            ${message ? `<div class="message ${statusClass === "ready" ? "ok" : "error"}">${escapeHtml(message)}</div>` : ""}
+          </div>
+        `;
+      }
+
+      function renderAuth(auth) {
+        const authHtml = `
+          <div class="row">
+            <strong>Status Otorisasi</strong>
+            <div>${auth.required ? '<span class="status error">REQUIRED</span>' : '<span class="status ready">READY</span>'}</div>
+            ${
+              auth.required && auth.url
+                ? `<div class="message error"><a href="${escapeAttr(auth.url)}" target="_blank" rel="noopener noreferrer">Authorize Access</a></div>`
+                : '<div class="message ok">Akses Apps Script sudah siap.</div>'
+            }
+          </div>
+        `;
+        document.getElementById("authWrap").innerHTML = authHtml;
+      }
+
+      function renderEvents(events) {
+        const wrap = document.getElementById("eventsWrap");
+        if (!events.length) {
+          wrap.innerHTML = '<div class="empty">Belum ada data pendidikan.</div>';
+          return;
+        }
+
+        wrap.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Status</th>
+                <th>Created By</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${events
+                .map((evt) => `
+                  <tr>
+                    <td>
+                      <strong>${escapeHtml(evt.eventName)}</strong>
+                      <div class="hint mono">${escapeHtml(evt.eventId)}</div>
+                    </td>
+                    <td>${escapeHtml(evt.status || "-")}</td>
+                    <td>${escapeHtml(evt.createdBy || "-")}</td>
+                  </tr>
+                `)
+                .join("")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function renderPackages(packages) {
+        const wrap = document.getElementById("packagesWrap");
+        if (!packages.length) {
+          wrap.innerHTML = '<div class="empty">Belum ada data HPS.</div>';
+          return;
+        }
+
+        const latest = packages.slice(0, 5);
+        wrap.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>HPS</th>
+                <th>Event</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${latest
+                .map((pkg) => `
+                  <tr>
+                    <td>
+                      <strong>${escapeHtml(pkg.hpsName)}</strong>
+                      <div class="hint mono">${escapeHtml(pkg.packageId)}</div>
+                    </td>
+                    <td>${escapeHtml(pkg.eventName || "-")}</td>
+                    <td>${escapeHtml(pkg.status || "-")}</td>
+                  </tr>
+                `)
+                .join("")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function setTopMessage(message, isError) {
+        const el = document.getElementById("topMessage");
+        el.textContent = message || "";
+        el.className = "message " + (isError ? "error" : "ok");
+      }
+
+      function escapeHtml(text) {
+        return String(text || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function escapeAttr(text) {
+        return escapeHtml(text);
+      }
+    </script>
+  </body>
+</html>

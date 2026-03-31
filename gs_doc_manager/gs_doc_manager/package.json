@@ -1,0 +1,17 @@
+{
+  "name": "gs-doc-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Document management system using free Google services (Apps Script + Sheets + Drive)",
+  "scripts": {
+    "login": "clasp login",
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "open": "clasp open",
+    "deploy": "clasp deploy"
+  },
+  "devDependencies": {
+    "@google/clasp": "^2.5.0"
+  }
+}
+
