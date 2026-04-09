@@ -1,10 +1,9 @@
 function doGet(e) {
   var page = sanitizeText(e && e.parameter && e.parameter.page).toLowerCase();
   if (page === 'admin') {
-    assertAdminAccess_();
     return renderPage_('Admin', 'SIMOD HPS Admin');
   }
-  return renderPage_('Index', 'SIMOD HPS Document Manager');
+  return renderPage_('Index', 'SIMOD HPS Pengelola Dokumen');
 }
 
 function include(filename) {
@@ -23,26 +22,14 @@ function renderPage_(fileName, title) {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-function assertAdminAccess_() {
-  var allowedEmails = (CONFIG.ADMIN_ALLOWED_EMAILS || [])
-    .map(function (email) { return sanitizeText(email).toLowerCase(); })
-    .filter(function (email) { return !!email; });
-  var activeEmail = (Session.getActiveUser().getEmail() || '').toLowerCase();
-
-  if (!allowedEmails.length) {
-    throw new Error('ADMIN_ALLOWED_EMAILS belum dikonfigurasi di Config.gs.');
-  }
-
-  if (!activeEmail || allowedEmails.indexOf(activeEmail) === -1) {
-    throw new Error('Anda tidak memiliki akses ke halaman admin.');
-  }
-}
-
-function getBootstrapData() {
+function getBootstrapData(sessionToken) {
+  var session = requireApprovedSession_(sessionToken);
   var config = getProjectConfig();
   var response = {
     profile: {
-      email: Session.getActiveUser().getEmail() || 'unknown'
+      email: session.email || 'unknown',
+      name: session.name || '',
+      picture: session.picture || ''
     },
     configured: config.configured,
     stats: {
@@ -86,16 +73,82 @@ function getBootstrapData() {
   return response;
 }
 
-function addEducation(eventName) {
-  return addEducationRecord(eventName);
+function addEducation(sessionToken, eventName) {
+  var session = requireAdminSession_(sessionToken);
+  return addEducationRecord(eventName, session.email);
 }
 
-function createHps(payload) {
-  return createHpsRecord(payload);
+function updateEducationStatus(sessionToken, eventId, nextStatus) {
+  var session = requireAdminSession_(sessionToken);
+  return updateEducationStatusRecord(eventId, nextStatus, session.email);
 }
 
-function uploadHpsFiles(payload) {
-  return uploadHpsFilesRecord(payload);
+function deleteEducation(sessionToken, eventId) {
+  var session = requireAdminSession_(sessionToken);
+  return deleteEducationRecord(eventId, session.email);
+}
+
+function createHps(sessionToken, payload) {
+  var session = requireApprovedSession_(sessionToken);
+  payload = payload || {};
+  if (sanitizeText(payload.noPesanan)) {
+    throw new Error('No. Surat Pesanan hanya dapat diisi oleh admin.');
+  }
+  return createHpsRecord(payload, session.email);
+}
+
+function updateHps(sessionToken, payload) {
+  requireApprovedSession_(sessionToken);
+  payload = payload || {};
+  if (sanitizeText(payload.noPesanan)) {
+    throw new Error('No. Surat Pesanan hanya dapat diubah oleh admin.');
+  }
+  return updateHpsRecord(payload);
+}
+
+function uploadHpsFiles(sessionToken, payload) {
+  var session = requireApprovedSession_(sessionToken);
+  payload = payload || {};
+  payload.files = filterFilesByRole_(payload.files || {}, CONFIG.USER_UPLOAD_KEYS, 'admin');
+  return uploadHpsFilesRecord(payload, session.email);
+}
+
+function adminSaveRestrictedData(sessionToken, payload) {
+  requireAdminSession_(sessionToken);
+  payload = payload || {};
+  payload.files = filterFilesByRole_(payload.files || {}, CONFIG.ADMIN_UPLOAD_KEYS, 'pengguna');
+  return updateAdminRestrictedRecord(payload);
+}
+
+function deleteHpsDocument(sessionToken, packageId, fileKey) {
+  requireAdminSession_(sessionToken);
+  return deleteHpsDocumentRecord(packageId, fileKey);
+}
+
+function startUserSession(email, displayName) {
+  return authenticateEmail(email, displayName);
+}
+
+function startAdminSession(adminCode) {
+  return authenticateAdmin(adminCode);
+}
+
+function deleteAccess(sessionToken, targetEmail) {
+  return deleteAccessRecord(sessionToken, targetEmail);
+}
+
+function getAdminNotifications(sessionToken) {
+  requireAdminSession_(sessionToken);
+  var notifications = listNotifications_(25);
+  return {
+    notifications: notifications,
+    unreadCount: notifications.filter(function (item) { return !item.isRead; }).length
+  };
+}
+
+function markNotificationsRead(sessionToken, notificationIds) {
+  requireAdminSession_(sessionToken);
+  return markNotificationsRead_(notificationIds);
 }
 
 function getStats(events, packages) {
@@ -117,15 +170,16 @@ function getAuthorizationState() {
   };
 }
 
-function getAdminBootstrapData() {
-  assertAdminAccess_();
+function getAdminBootstrapData(sessionToken) {
+  var session = requireAdminSession_(sessionToken);
   var spreadsheetState = getSpreadsheetState();
   var driveState = getDriveFolderState();
   var authState = getAuthorizationState();
 
   var response = {
     profile: {
-      email: Session.getActiveUser().getEmail() || 'unknown'
+      email: session.email || 'unknown',
+      name: session.name || ''
     },
     auth: authState,
     config: {
@@ -144,15 +198,27 @@ function getAdminBootstrapData() {
       readyHps: 0,
       draftHps: 0
     },
+    accessRecords: [],
+    notifications: [],
+    unreadNotificationCount: 0,
     events: [],
     packages: []
   };
 
-  if (!spreadsheetState.ok || !driveState.ok) {
+  if (!spreadsheetState.ok) {
     return response;
   }
 
   setupSheets();
+  response.accessRecords = listAccessRecords_();
+  response.notifications = listNotifications_(25);
+  response.unreadNotificationCount = response.notifications.filter(function (item) {
+    return !item.isRead;
+  }).length;
+
+  if (!driveState.ok) {
+    return response;
+  }
 
   var events = listEducationEvents();
   var packages = listHpsPackages({});
@@ -160,4 +226,25 @@ function getAdminBootstrapData() {
   response.packages = packages;
   response.stats = getStats(events, packages);
   return response;
+}
+
+function filterFilesByRole_(files, allowedKeys, ownerLabel) {
+  var nextFiles = {};
+  var allowedMap = {};
+
+  (allowedKeys || []).forEach(function (key) {
+    allowedMap[key] = true;
+  });
+
+  Object.keys(files || {}).forEach(function (key) {
+    if (!files[key]) return;
+    if (!allowedMap[key]) {
+      var fileConfig = CONFIG.FILE_COLUMNS[key];
+      var fileLabel = fileConfig ? fileConfig.label : key;
+      throw new Error(fileLabel + ' hanya dapat diunggah oleh ' + ownerLabel + '.');
+    }
+    nextFiles[key] = files[key];
+  });
+
+  return nextFiles;
 }

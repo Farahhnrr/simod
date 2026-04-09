@@ -10,17 +10,18 @@
     />
     <style>
       :root {
-        --bg-1: #f5f7ff;
-        --bg-2: #eef7f3;
-        --card: #ffffff;
-        --text: #0f172a;
-        --muted: #475569;
-        --line: #dbe2ef;
-        --brand: #0f766e;
-        --brand-strong: #115e59;
-        --accent: #1d4ed8;
-        --warning: #92400e;
-        --danger: #b91c1c;
+        --bg-1: #f7faf7;
+        --bg-2: #eef5f1;
+        --card: rgba(255, 255, 255, 0.9);
+        --card-strong: rgba(255, 255, 255, 0.98);
+        --text: #163127;
+        --muted: #61786d;
+        --line: rgba(53, 89, 73, 0.14);
+        --line-strong: rgba(53, 89, 73, 0.24);
+        --brand: #2f7d67;
+        --brand-strong: #225f4f;
+        --danger: #cb5a4b;
+        --shadow: 0 20px 48px rgba(27, 58, 47, 0.12);
       }
 
       * {
@@ -32,9 +33,10 @@
         font-family: "Space Grotesk", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(900px 500px at -10% -20%, #d9edff 0%, transparent 55%),
-          radial-gradient(900px 500px at 110% -20%, #d7f8e9 0%, transparent 55%),
-          linear-gradient(180deg, var(--bg-1), var(--bg-2));
+          radial-gradient(900px 560px at -10% -20%, rgba(81, 162, 132, 0.16) 0%, transparent 58%),
+          radial-gradient(700px 420px at 110% 0%, rgba(221, 241, 233, 0.9) 0%, transparent 52%),
+          linear-gradient(180deg, var(--bg-1), var(--bg-2) 72%);
+        min-height: 100vh;
       }
 
       .container {
@@ -48,7 +50,9 @@
       .card {
         background: var(--card);
         border: 1px solid var(--line);
-        border-radius: 16px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
       }
 
       .header,
@@ -56,9 +60,20 @@
         padding: 18px;
       }
 
+      .header {
+        background:
+          linear-gradient(135deg, rgba(61, 141, 116, 0.14), transparent 42%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 250, 246, 0.96));
+      }
+
+      .card {
+        background: linear-gradient(180deg, var(--card-strong), var(--card));
+      }
+
       .title {
         margin: 0;
         font-size: clamp(22px, 3.5vw, 34px);
+        letter-spacing: -0.03em;
       }
 
       .subtitle,
@@ -76,19 +91,28 @@
       .nav a,
       .btn {
         border: 1px solid var(--line);
-        border-radius: 10px;
+        border-radius: 999px;
         padding: 10px 14px;
         text-decoration: none;
-        background: #fff;
+        background: rgba(255, 255, 255, 0.72);
         color: var(--text);
         font: inherit;
         cursor: pointer;
+        transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .nav a:hover,
+      .btn:hover {
+        background: rgba(47, 125, 103, 0.08);
+        border-color: var(--line-strong);
+        transform: translateY(-1px);
       }
 
       .btn.primary {
-        background: var(--brand);
-        color: #fff;
-        border-color: var(--brand);
+        background: linear-gradient(180deg, #348a71, #286c59);
+        color: #f8fdfa;
+        border-color: transparent;
+        box-shadow: 0 14px 30px rgba(44, 103, 84, 0.2);
       }
 
       .grid {
@@ -115,10 +139,10 @@
       }
 
       .stat {
-        background: #f8fafc;
+        background: linear-gradient(180deg, rgba(236, 248, 241, 0.96), rgba(255, 255, 255, 0.98));
         border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px;
+        border-radius: 16px;
+        padding: 14px;
       }
 
       .label {
@@ -127,9 +151,10 @@
       }
 
       .value {
-        margin-top: 6px;
-        font-size: 22px;
+        margin-top: 8px;
+        font-size: 26px;
         font-weight: 700;
+        color: var(--brand-strong);
       }
 
       .status {
@@ -141,13 +166,27 @@
       }
 
       .status.ready {
-        background: #dcfce7;
-        color: #166534;
+        background: rgba(47, 125, 103, 0.12);
+        color: var(--brand-strong);
+        border: 1px solid rgba(47, 125, 103, 0.18);
       }
 
       .status.error {
-        background: #fee2e2;
+        background: rgba(203, 90, 75, 0.12);
         color: var(--danger);
+        border: 1px solid rgba(203, 90, 75, 0.18);
+      }
+
+      .status.proses {
+        background: rgba(220, 145, 45, 0.12);
+        color: #996212;
+        border: 1px solid rgba(220, 145, 45, 0.18);
+      }
+
+      .status.done {
+        background: rgba(47, 125, 103, 0.12);
+        color: var(--brand-strong);
+        border: 1px solid rgba(47, 125, 103, 0.18);
       }
 
       .stack {
@@ -162,14 +201,25 @@
 
       .row {
         border: 1px solid var(--line);
-        border-radius: 12px;
+        border-radius: 16px;
         padding: 12px;
-        background: #fbfdff;
+        background: linear-gradient(180deg, rgba(239, 248, 243, 0.96), rgba(255, 255, 255, 0.98));
       }
 
       .row strong {
         display: block;
         margin-bottom: 6px;
+      }
+
+      .status-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      @media (min-width: 860px) {
+        .status-grid {
+          grid-template-columns: 1fr 1fr;
+        }
       }
 
       .mono {
@@ -195,6 +245,20 @@
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
+        overflow: hidden;
+        border-radius: 16px;
+      }
+
+      .hps-table th:nth-child(1),
+      .hps-table td:nth-child(1) {
+        width: 28%;
+        min-width: 240px;
+      }
+
+      .hps-table th:nth-child(3),
+      .hps-table td:nth-child(3) {
+        width: 18%;
+        min-width: 180px;
       }
 
       th,
@@ -209,6 +273,16 @@
         font-size: 12px;
         color: var(--muted);
         text-transform: uppercase;
+        letter-spacing: 0.08em;
+        background: rgba(244, 250, 246, 0.82);
+      }
+
+      tbody tr {
+        transition: background 160ms ease;
+      }
+
+      tbody tr:hover {
+        background: rgba(47, 125, 103, 0.04);
       }
 
       .empty {
@@ -216,7 +290,357 @@
         text-align: center;
         color: var(--muted);
         border: 1px dashed var(--line);
+        border-radius: 16px;
+        background: rgba(248, 252, 249, 0.9);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      input,
+      select {
+        width: 100%;
+        border: 1px solid var(--line);
         border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(248, 252, 249, 0.95);
+        color: var(--text);
+        font: inherit;
+        transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      input::placeholder {
+        color: rgba(97, 120, 109, 0.76);
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: rgba(47, 125, 103, 0.58);
+        box-shadow: 0 0 0 3px rgba(47, 125, 103, 0.14);
+      }
+
+      .auth-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .auth-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .profile-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(244, 250, 246, 0.94);
+        font-size: 13px;
+      }
+
+      .bell-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .bell-badge {
+        position: absolute;
+        top: -4px;
+        right: -2px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: var(--danger);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.95);
+      }
+
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .field {
+        margin-bottom: 12px;
+      }
+
+      .doc-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .notification-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .notification-item {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px;
+        background: linear-gradient(180deg, rgba(239, 248, 243, 0.96), rgba(255, 255, 255, 0.98));
+      }
+
+      .notification-item.unread {
+        border-color: rgba(47, 125, 103, 0.32);
+        box-shadow: inset 0 0 0 1px rgba(47, 125, 103, 0.1);
+      }
+
+      .notification-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .notification-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .row-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tiny-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(244, 250, 246, 0.94);
+        color: var(--text);
+        text-decoration: none;
+        font-size: 12px;
+      }
+
+      .tiny-link:hover {
+        background: rgba(47, 125, 103, 0.08);
+        border-color: var(--line-strong);
+      }
+
+      .doc-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .doc-upload-slots {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .doc-upload-slot {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px;
+        background: linear-gradient(180deg, rgba(239, 248, 243, 0.96), rgba(255, 255, 255, 0.98));
+      }
+
+      .doc-upload-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+
+      .doc-upload-label {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .doc-upload-state {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .folder-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 138px;
+        justify-content: center;
+        padding: 9px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(47, 125, 103, 0.18);
+        background: linear-gradient(180deg, rgba(225, 244, 236, 0.96), rgba(244, 250, 246, 0.98));
+        color: var(--brand-strong);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+      }
+
+      .missing {
+        color: rgba(97, 120, 109, 0.76);
+        font-size: 12px;
+      }
+
+      .modal-shell {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(30, 50, 41, 0.16);
+        z-index: 20;
+        backdrop-filter: blur(6px);
+      }
+
+      .modal-shell.open {
+        display: flex;
+      }
+
+      .modal {
+        width: min(560px, 100%);
+        max-height: min(90vh, 760px);
+        overflow: auto;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(244, 250, 246, 0.98));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: 0 28px 70px rgba(27, 58, 47, 0.18);
+        padding: 20px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .modal-title {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .modal-close {
+        flex: 0 0 auto;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .modal-note {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .event-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .event-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      @media (max-width: 720px) {
+        .event-item {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .event-btn {
+        text-align: left;
+        border: 1px solid var(--line);
+        background: rgba(244, 250, 246, 0.94);
+        border-radius: 14px;
+        padding: 12px 14px;
+        color: var(--text);
+        cursor: pointer;
+        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+      }
+
+      .event-btn:hover {
+        border-color: var(--line-strong);
+        background: rgba(47, 125, 103, 0.06);
+        transform: translateY(-1px);
+      }
+
+      .event-btn.active {
+        border-color: rgba(47, 125, 103, 0.34);
+        background: linear-gradient(180deg, rgba(47, 125, 103, 0.14), rgba(47, 125, 103, 0.05));
+        box-shadow: inset 0 0 0 1px rgba(47, 125, 103, 0.12);
+      }
+
+      .event-btn:focus-visible {
+        outline: none;
+        border-color: rgba(47, 125, 103, 0.58);
+        box-shadow: 0 0 0 3px rgba(47, 125, 103, 0.14);
+      }
+
+      .event-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .event-actions {
+        display: flex;
+        align-items: stretch;
+      }
+
+      .btn.compact {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .auth-actions .field {
+        margin: 0;
+        min-width: min(320px, 100%);
       }
     </style>
   </head>
@@ -226,13 +650,37 @@
         <h1 class="title">SIMOD HPS - Admin</h1>
         <p class="subtitle">Monitor konfigurasi Apps Script, akses data, dan ringkasan isi spreadsheet dari satu deployment.</p>
         <div class="nav">
-          <a class="btn" id="userUiBtn" href="<?= userUiUrl ?>" target="_top" rel="noopener noreferrer">Buka UI User</a>
-          <a class="btn" id="adminUiBtn" href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">Reload Admin</a>
-          <button class="btn primary" id="refreshBtn" type="button">Refresh Data</button>
+          <a class="btn" id="userUiBtn" href="<?= userUiUrl ?>" target="_top" rel="noopener noreferrer">Buka Halaman Pengguna</a>
+          <a class="btn" id="adminUiBtn" href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">Muat Ulang Admin</a>
+          <button class="btn primary" id="refreshBtn" type="button">Muat Ulang Data</button>
+          <button class="btn bell-btn" id="openNotificationsBtn" type="button" title="Notifikasi" aria-label="Notifikasi" style="display:none;">
+            <span aria-hidden="true">🔔</span>
+            <span class="bell-badge" id="notificationBadge" style="display:none;">0</span>
+          </button>
+          <div class="profile-chip" id="profileChip" style="display:none;">
+            <span id="profileEmail">-</span>
+          </div>
         </div>
         <div id="topMessage" class="message"></div>
       </section>
 
+      <section class="card auth-card" id="authCard">
+        <div>
+          <div class="hint">Akses admin</div>
+          <h2 style="margin-top:6px;">Masukkan kode admin untuk membuka halaman admin</h2>
+          <div class="hint" id="authSubtitle">Gunakan kode yang Anda simpan di Config.gs pada ADMIN_ACCESS_CODE.</div>
+          <div id="authMessage" class="message"></div>
+        </div>
+        <div class="auth-actions">
+          <div class="field">
+            <label for="adminCodeInput">Kode Admin</label>
+            <input id="adminCodeInput" type="password" placeholder="Masukkan kode admin" />
+          </div>
+          <button class="btn primary" id="startAdminSessionBtn" type="button">Buka Admin</button>
+        </div>
+      </section>
+
+      <div id="adminShell" style="display:none; gap:16px;">
       <section class="card">
         <div class="stats">
           <div class="stat">
@@ -244,46 +692,194 @@
             <div class="value" id="statHps">0</div>
           </div>
           <div class="stat">
-            <div class="label">READY</div>
+            <div class="label">Siap</div>
             <div class="value" id="statReady">0</div>
           </div>
           <div class="stat">
-            <div class="label">DRAFT</div>
+            <div class="label">Draf</div>
             <div class="value" id="statDraft">0</div>
           </div>
         </div>
       </section>
 
+      <section class="card">
+        <h2>Daftar Pendidikan</h2>
+        <div class="field">
+          <label for="eventNameInput">Nama Pendidikan</label>
+          <input id="eventNameInput" placeholder="Contoh: Pendidikan Militer" />
+        </div>
+        <button class="btn primary" id="addEventBtn" type="button">Tambah Pendidikan</button>
+        <div id="eventMessage" class="message"></div>
+        <div class="event-list" id="eventsWrap"></div>
+      </section>
+
+      <section class="card">
+        <h2>Input Admin untuk HPS</h2>
+        <div id="adminManageTableWrap" style="margin-top:14px;"></div>
+      </section>
+
       <section class="grid">
         <div class="card">
-          <h2>Konfigurasi</h2>
-          <div class="stack key-value" id="configWrap"></div>
+          <h2>Permintaan Akses</h2>
+          <div id="pendingAccessWrap"></div>
         </div>
 
         <div class="card">
-          <h2>Akses</h2>
+          <h2>Daftar Akses</h2>
+          <div id="accessWrap"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Status Sistem</h2>
+        <div class="hint" style="margin-bottom:12px;">Ringkasan singkat konfigurasi utama dan status otorisasi Apps Script.</div>
+        <div class="status-grid" id="statusSystemWrap">
+          <div class="stack key-value" id="configWrap"></div>
           <div class="stack key-value" id="authWrap"></div>
         </div>
       </section>
+      </div>
+    </div>
 
-      <section class="grid">
-        <div class="card">
-          <h2>Daftar Pendidikan</h2>
-          <div id="eventsWrap"></div>
+    <div class="modal-shell" id="adminHpsModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="adminHpsModalTitle">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="adminHpsModalTitle">Input Admin untuk HPS</h2>
+            <p class="modal-note">Kelola No. Surat Pesanan dan dokumen khusus admin untuk HPS yang dipilih. Dokumen yang sudah ada ditandai sudah diunggah. Hapus dokumen tersebut jika ingin mengunggah file baru.</p>
+          </div>
+          <button class="btn modal-close" id="closeAdminHpsBtn" type="button">Tutup</button>
         </div>
+        <div class="row">
+          <strong>HPS terpilih</strong>
+          <div class="hint" id="adminSelectedHpsLabel">Belum ada HPS yang dipilih.</div>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label for="adminNoPesananInput">No. Surat Pesanan</label>
+          <input id="adminNoPesananInput" placeholder="Contoh: SP-2026-019" />
+        </div>
+        <div class="doc-upload-slots" id="adminDocUploadSlots"></div>
+        <div class="hint" id="adminHpsMeta">Pilih HPS untuk melihat informasi saat ini.</div>
+        <div class="doc-links" id="adminDocLinks"></div>
+        <div id="adminHpsMessage" class="message"></div>
+        <div class="modal-actions">
+          <button class="btn" id="saveAdminHpsBtn" type="button">Simpan Input Admin</button>
+        </div>
+      </div>
+    </div>
 
-        <div class="card">
-          <h2>5 HPS Terbaru</h2>
-          <div id="packagesWrap"></div>
+    <div class="modal-shell" id="notificationsModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="notificationsModalTitle">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="notificationsModalTitle">Notifikasi</h2>
+            <p class="modal-note">Notifikasi ini muncul saat pengguna mengunggah Dokumen HPS.</p>
+          </div>
+          <button class="btn modal-close" id="closeNotificationsBtn" type="button">Tutup</button>
         </div>
-      </section>
+        <div id="notificationsSummary" class="hint" style="margin-bottom:12px;">Belum ada notifikasi.</div>
+        <div class="notification-list" id="notificationsWrap"></div>
+        <div class="modal-actions">
+          <button class="btn" id="markNotificationsReadBtn" type="button">Tandai Semua Dibaca</button>
+        </div>
+      </div>
     </div>
 
     <script>
+      let sessionToken = "";
+      let currentProfile = null;
+      let allEvents = [];
+      let allPackages = [];
+      let notifications = [];
+      let selectedEventId = "";
+      let selectedAdminPackageId = "";
+      let notificationPollHandle = null;
+      const adminUploadSlotDefs = [
+        { key: "hpsLinkInaproc", label: "Dokumen HPS + LINK INAPROC", urlField: "hpsLinkInaprocFileUrl", inputId: "adminFileHpsLinkInaproc" },
+        { key: "eFaktur", label: "Dokumen E-Faktur", urlField: "eFakturFileUrl", inputId: "adminFileEFaktur" },
+        { key: "suratPesanan", label: "Dokumen Surat Pesanan", urlField: "suratPesananFileUrl", inputId: "adminFileSuratPesanan" },
+        { key: "bast", label: "Dokumen BAST", urlField: "bastFileUrl", inputId: "adminFileBast" }
+      ];
+
       document.getElementById("refreshBtn").addEventListener("click", refreshAdminData);
-      refreshAdminData();
+      document.getElementById("openNotificationsBtn").addEventListener("click", openNotificationsModal);
+      document.getElementById("closeNotificationsBtn").addEventListener("click", closeNotificationsModal);
+      document.getElementById("markNotificationsReadBtn").addEventListener("click", markAllNotificationsRead);
+      document.getElementById("startAdminSessionBtn").addEventListener("click", startAdminSession);
+      document.getElementById("addEventBtn").addEventListener("click", handleAddEvent);
+      document.getElementById("saveAdminHpsBtn").addEventListener("click", saveAdminHpsData);
+      document.getElementById("closeAdminHpsBtn").addEventListener("click", closeAdminHpsModal);
+      document.getElementById("adminHpsModal").addEventListener("click", handleModalBackdropClick);
+      document.getElementById("notificationsModal").addEventListener("click", handleModalBackdropClick);
+      document.addEventListener("keydown", handleGlobalKeydown);
+      bootAuth();
+
+      function bootAuth() {
+        var savedToken = sessionStorage.getItem("simod_admin_session") || "";
+        if (!savedToken) {
+          setAuthMessage("Masukkan kode admin untuk melanjutkan.", false);
+          return;
+        }
+        google.script.run
+          .withSuccessHandler((result) => {
+            sessionToken = savedToken;
+            currentProfile = result.profile || null;
+            updateProfileChip_();
+            if (!result.access || !result.access.isAdmin) {
+              sessionStorage.removeItem("simod_admin_session");
+              setAuthMessage("Sesi admin tidak valid. Masukkan kode lagi.", true);
+              return;
+            }
+            document.getElementById("authCard").style.display = "none";
+            document.getElementById("adminShell").style.display = "grid";
+            startNotificationPolling_();
+            refreshAdminData();
+          })
+          .withFailureHandler(() => {
+            sessionStorage.removeItem("simod_admin_session");
+            sessionToken = "";
+            currentProfile = null;
+            stopNotificationPolling_();
+            updateProfileChip_();
+            setAuthMessage("Sesi admin sudah berakhir. Masukkan kode lagi.", false);
+          })
+          .getSessionState(savedToken);
+      }
+
+      function startAdminSession() {
+        var adminCode = document.getElementById("adminCodeInput").value.trim();
+        if (!adminCode) {
+          setAuthMessage("Kode admin wajib diisi.", true);
+          return;
+        }
+
+        setAuthMessage("Memverifikasi kode admin...", false);
+        google.script.run
+          .withSuccessHandler((result) => {
+            sessionToken = result.sessionToken || "";
+            currentProfile = result.profile || null;
+            sessionStorage.setItem("simod_admin_session", sessionToken);
+            updateProfileChip_();
+            if (!result.access || !result.access.isAdmin) {
+              setAuthMessage("Sesi admin tidak valid.", true);
+              return;
+            }
+            document.getElementById("authCard").style.display = "none";
+            document.getElementById("adminShell").style.display = "grid";
+            startNotificationPolling_();
+            refreshAdminData();
+          })
+          .withFailureHandler((err) => {
+            setAuthMessage(err && err.message ? err.message : "Gagal memverifikasi kode admin.", true);
+          })
+          .startAdminSession(adminCode);
+      }
 
       function refreshAdminData() {
+        if (!sessionToken) {
+          setTopMessage("Masukkan kode admin terlebih dahulu.", true);
+          return;
+        }
         setTopMessage("Memuat data admin...", false);
         google.script.run
           .withSuccessHandler((data) => {
@@ -291,14 +887,28 @@
             renderStats(data.stats || {});
             renderConfig(data.config || {});
             renderAuth(data.auth || {});
-            renderEvents(data.events || []);
-            renderPackages(data.packages || []);
+            allEvents = data.events || [];
+            notifications = data.notifications || [];
+            renderNotifications(notifications, data.unreadNotificationCount || 0);
+            if (!selectedEventId && allEvents.length) {
+              selectedEventId = allEvents[0].eventId;
+            } else if (selectedEventId && !allEvents.some((evt) => evt.eventId === selectedEventId)) {
+              selectedEventId = allEvents.length ? allEvents[0].eventId : "";
+            }
+            renderEvents(allEvents);
+            allPackages = data.packages || [];
+            if (selectedAdminPackageId && !allPackages.some((pkg) => pkg.packageId === selectedAdminPackageId && pkg.eventId === selectedEventId)) {
+              selectedAdminPackageId = "";
+            }
+            renderAdminManager(allPackages);
+            renderPendingAccess(data.accessRecords || []);
+            renderAccess(data.accessRecords || []);
           })
           .withFailureHandler((err) => {
-            const msg = err && err.message ? err.message : String(err || "Unknown error");
+            const msg = err && err.message ? err.message : String(err || "Terjadi kesalahan yang tidak diketahui");
             setTopMessage(msg, true);
           })
-          .getAdminBootstrapData();
+          .getAdminBootstrapData(sessionToken);
       }
 
       function renderStats(stats) {
@@ -310,22 +920,23 @@
 
       function renderConfig(config) {
         const rows = [
-          buildConfigRow("Static Sheet ID", config.staticSheetId || "-", config.spreadsheetStatus, config.spreadsheetMessage),
-          buildConfigRow("Static Drive Folder ID", config.staticDriveFolderId || "-", config.driveStatus, config.driveMessage),
-          buildConfigRow("Effective Sheet ID", config.effectiveSheetId || "-", config.spreadsheetStatus, ""),
-          buildConfigRow("Effective Drive Folder ID", config.effectiveDriveFolderId || "-", config.driveStatus, "")
+          buildConfigRow("Sheet", config.staticSheetId || "-", config.spreadsheetStatus, config.spreadsheetMessage, config.effectiveSheetId || "-"),
+          buildConfigRow("Drive", config.staticDriveFolderId || "-", config.driveStatus, config.driveMessage, config.effectiveDriveFolderId || "-")
         ];
         document.getElementById("configWrap").innerHTML = rows.join("");
       }
 
-      function buildConfigRow(label, value, status, message) {
+      function buildConfigRow(label, value, status, message, effectiveValue) {
         const statusClass = status === "READY" ? "ready" : "error";
         return `
           <div class="row">
             <strong>${escapeHtml(label)}</strong>
+            <div class="hint">Statis</div>
             <div class="mono">${escapeHtml(value)}</div>
+            <div class="hint" style="margin-top:8px;">Aktif</div>
+            <div class="mono">${escapeHtml(effectiveValue || "-")}</div>
             <div style="margin-top:8px;">
-              <span class="status ${statusClass}">${escapeHtml(status || "UNKNOWN")}</span>
+              <span class="status ${statusClass}">${escapeHtml(localizeStatus(status || "UNKNOWN"))}</span>
             </div>
             ${message ? `<div class="message ${statusClass === "ready" ? "ok" : "error"}">${escapeHtml(message)}</div>` : ""}
           </div>
@@ -335,12 +946,12 @@
       function renderAuth(auth) {
         const authHtml = `
           <div class="row">
-            <strong>Status Otorisasi</strong>
-            <div>${auth.required ? '<span class="status error">REQUIRED</span>' : '<span class="status ready">READY</span>'}</div>
+            <strong>Otorisasi Apps Script</strong>
+            <div>${auth.required ? '<span class="status error">Perlu Otorisasi</span>' : '<span class="status ready">Siap</span>'}</div>
             ${
               auth.required && auth.url
-                ? `<div class="message error"><a href="${escapeAttr(auth.url)}" target="_blank" rel="noopener noreferrer">Authorize Access</a></div>`
-                : '<div class="message ok">Akses Apps Script sudah siap.</div>'
+                ? `<div class="message error"><a href="${escapeAttr(auth.url)}" target="_blank" rel="noopener noreferrer">Otorisasi Akses</a></div>`
+                : '<div class="message ok">Akses siap dipakai.</div>'
             }
           </div>
         `;
@@ -354,25 +965,542 @@
           return;
         }
 
+        wrap.innerHTML = events
+          .map((evt) => `
+            <div class="event-item">
+              <div
+                class="event-btn ${evt.eventId === selectedEventId ? "active" : ""}"
+                role="button"
+                tabindex="0"
+                onclick="selectEvent('${escapeAttr(evt.eventId)}')"
+                onkeydown="handleEventCardKeydown(event, '${escapeAttr(evt.eventId)}')"
+              >
+                <strong>${escapeHtml(evt.eventName)}</strong>
+                <div class="hint mono" style="margin-top:6px;">${escapeHtml(evt.eventId)}</div>
+                <div class="event-meta">
+                  <span class="status ${escapeAttr(getEducationStatusClass_(evt.status))}">${escapeHtml(localizeStatus(evt.status || "-"))}</span>
+                  <span class="hint">${escapeHtml(formatHpsCount_(getHpsCountForEvent_(evt.eventId)))}</span>
+                  <span class="hint">Dibuat oleh ${escapeHtml(evt.createdBy || "-")}</span>
+                </div>
+              </div>
+              <div class="event-actions">
+                <button class="btn compact" type="button" onclick="toggleEducationStatus('${escapeAttr(evt.eventId)}', '${escapeAttr(getNextEducationStatus_(evt.status))}')">
+                  ${escapeHtml(getEducationStatusActionLabel_(evt.status))}
+                </button>
+                <button class="btn compact" type="button" onclick="deleteEducation('${escapeAttr(evt.eventId)}', '${escapeAttr(evt.eventName)}')">
+                  Hapus
+                </button>
+              </div>
+            </div>
+          `)
+          .join("");
+      }
+
+      function selectEvent(eventId) {
+        selectedEventId = eventId;
+        if (!allPackages.some((pkg) => pkg.packageId === selectedAdminPackageId && pkg.eventId === selectedEventId)) {
+          selectedAdminPackageId = "";
+        }
+        renderEvents(allEvents);
+        renderAdminManager(allPackages);
+      }
+      window.selectEvent = selectEvent;
+
+      function handleEventCardKeydown(event, eventId) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        selectEvent(eventId);
+      }
+      window.handleEventCardKeydown = handleEventCardKeydown;
+
+      function handleAddEvent() {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        const input = document.getElementById("eventNameInput");
+        const name = input.value.trim();
+        if (!name) {
+          setEventMessage("Nama pendidikan wajib diisi.", true);
+          return;
+        }
+
+        setEventMessage("Menyimpan pendidikan...", false);
+        google.script.run
+          .withSuccessHandler((res) => {
+            input.value = "";
+            if (res && res.event) {
+              allEvents.push(res.event);
+              allEvents.sort((a, b) => a.eventName.localeCompare(b.eventName));
+              selectedEventId = res.event.eventId;
+              renderEvents(allEvents);
+            }
+            setEventMessage("Pendidikan berhasil ditambahkan.", false);
+            refreshAdminData();
+          })
+          .withFailureHandler((err) => {
+            setEventMessage(err && err.message ? err.message : "Gagal tambah pendidikan.", true);
+          })
+          .addEducation(sessionToken, name);
+      }
+
+      function toggleEducationStatus(eventId, nextStatus) {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        setTopMessage("Memperbarui status pendidikan...", false);
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res && res.event) {
+              upsertEvent_(res.event);
+              renderEvents(allEvents);
+            }
+            setTopMessage("Status pendidikan berhasil diperbarui.", false);
+          })
+          .withFailureHandler((err) => {
+            setTopMessage(err && err.message ? err.message : "Status pendidikan gagal diperbarui.", true);
+          })
+          .updateEducationStatus(sessionToken, eventId, nextStatus);
+      }
+      window.toggleEducationStatus = toggleEducationStatus;
+
+      function deleteEducation(eventId, eventName) {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        const ok = window.confirm('Hapus pendidikan "' + (eventName || '-') + '"? Pendidikan hanya bisa dihapus jika belum memiliki HPS.');
+        if (!ok) return;
+
+        setTopMessage("Menghapus pendidikan...", false);
+        google.script.run
+          .withSuccessHandler((res) => {
+            allEvents = allEvents.filter((evt) => evt.eventId !== eventId);
+            if (selectedEventId === eventId) {
+              selectedEventId = allEvents.length ? allEvents[0].eventId : "";
+              selectedAdminPackageId = "";
+            }
+            renderEvents(allEvents);
+            renderAdminManager(allPackages);
+            setTopMessage("Pendidikan berhasil dihapus.", false);
+          })
+          .withFailureHandler((err) => {
+            setTopMessage(err && err.message ? err.message : "Pendidikan gagal dihapus.", true);
+          })
+          .deleteEducation(sessionToken, eventId);
+      }
+      window.deleteEducation = deleteEducation;
+
+      function renderAdminManager(packages) {
+        const filtered = packages.filter((pkg) => (selectedEventId ? pkg.eventId === selectedEventId : false));
+        const wrap = document.getElementById("adminManageTableWrap");
+
+        if (!filtered.length) {
+          wrap.innerHTML = '<div class="empty">Belum ada data HPS.</div>';
+          resetAdminModalForm_();
+          document.getElementById("adminHpsMeta").textContent = selectedEventId
+            ? "Belum ada HPS untuk pendidikan yang dipilih."
+            : "Pilih pendidikan terlebih dahulu untuk mengelola HPS.";
+          return;
+        }
+
+        if (selectedAdminPackageId && !filtered.some((pkg) => pkg.packageId === selectedAdminPackageId)) {
+          selectedAdminPackageId = "";
+        }
+
+        wrap.innerHTML = `
+          <table class="hps-table">
+            <thead>
+              <tr>
+                <th>Nama HPS</th>
+                <th>RUP</th>
+                <th>No. Surat Pesanan</th>
+                <th>Dokumen</th>
+                <th>Status</th>
+                <th>Folder</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filtered
+                .map((pkg) => {
+                  const statusClass = pkg.status === "READY" ? "ready" : "error";
+                  return `
+                    <tr>
+                      <td>
+                        <div><strong>${escapeHtml(pkg.hpsName)}</strong></div>
+                        <div class="hint mono">${escapeHtml(pkg.packageId)}</div>
+                      </td>
+                      <td>${escapeHtml(pkg.rupNumber || "-")}</td>
+                      <td>${escapeHtml(pkg.noPesanan || "-")}</td>
+                      <td>
+                        <div class="row-actions">
+                          ${renderAdminFileLink(pkg.hpsFileUrl, "HPS")}
+                          ${renderAdminFileLink(pkg.hpsLinkInaprocFileUrl, "HPS + LINK INAPROC")}
+                          ${renderAdminFileLink(pkg.eFakturFileUrl, "E-Faktur")}
+                          ${renderAdminFileLink(pkg.suratPesananFileUrl, "Surat Pesanan")}
+                          ${renderAdminFileLink(pkg.bastFileUrl, "BAST")}
+                        </div>
+                      </td>
+                      <td><span class="status ${statusClass}">${escapeHtml(localizeStatus(pkg.status || "-"))}</span></td>
+                      <td>${renderAdminFolderLink(pkg.packageFolderUrl)}</td>
+                      <td>
+                        <div class="row-actions">
+                          <button class="btn" type="button" onclick="openAdminHpsModalForPackage('${escapeAttr(pkg.packageId)}')">
+                            Input Admin
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                })
+                .join("")}
+            </tbody>
+          </table>
+        `;
+
+      }
+
+      function openAdminHpsModalForPackage(packageId) {
+        selectedAdminPackageId = packageId;
+        syncAdminManagerForm();
+        setAdminHpsMessage("", false);
+        setModalOpen_("adminHpsModal", true);
+        document.getElementById("adminNoPesananInput").focus();
+      }
+      window.openAdminHpsModalForPackage = openAdminHpsModalForPackage;
+
+      function closeAdminHpsModal() {
+        setModalOpen_("adminHpsModal", false);
+        clearAdminInputs();
+      }
+
+      function syncAdminManagerForm() {
+        const packageId = selectedAdminPackageId;
+        const target = allPackages.find((pkg) => pkg.packageId === packageId);
+        const noPesananInput = document.getElementById("adminNoPesananInput");
+        const metaEl = document.getElementById("adminHpsMeta");
+        const docLinks = document.getElementById("adminDocLinks");
+        const selectedLabel = document.getElementById("adminSelectedHpsLabel");
+
+        if (!target) {
+          noPesananInput.value = "";
+          metaEl.textContent = "Pilih HPS untuk melihat informasi saat ini.";
+          selectedLabel.textContent = "Belum ada HPS yang dipilih.";
+          document.getElementById("adminDocUploadSlots").innerHTML = "";
+          docLinks.innerHTML = "";
+          return;
+        }
+
+        noPesananInput.value = target.noPesanan || "";
+        selectedLabel.textContent = target.hpsName + (target.rupNumber ? " | " + target.rupNumber : "");
+        metaEl.textContent = (target.eventName || "-") + " | " + (target.rupNumber || "-") + " | Status: " + localizeStatus(target.status || "-");
+        renderAdminUploadSlots_(target);
+        docLinks.innerHTML = [
+          renderAdminManagedDoc_(target.packageId, "hps", target.hpsFileUrl, "HPS")
+        ].join("");
+        setAdminHpsMessage("", false);
+      }
+
+      function handleModalBackdropClick(event) {
+        if (event.target.id === "adminHpsModal") {
+          closeAdminHpsModal();
+          return;
+        }
+
+        if (event.target.id === "notificationsModal") {
+          closeNotificationsModal();
+        }
+      }
+
+      function handleGlobalKeydown(event) {
+        if (event.key !== "Escape") return;
+        closeAdminHpsModal();
+        closeNotificationsModal();
+      }
+
+      function setModalOpen_(modalId, isOpen) {
+        const modal = document.getElementById(modalId);
+        modal.classList.toggle("open", isOpen);
+        modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      }
+
+      function openNotificationsModal() {
+        renderNotifications(notifications);
+        setModalOpen_("notificationsModal", true);
+      }
+
+      function closeNotificationsModal() {
+        setModalOpen_("notificationsModal", false);
+      }
+
+      async function saveAdminHpsData() {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        const packageId = selectedAdminPackageId;
+        const target = allPackages.find((pkg) => pkg.packageId === packageId);
+        if (!packageId || !target) {
+          setAdminHpsMessage("Pilih HPS terlebih dahulu.", true);
+          return;
+        }
+
+        try {
+          const noPesanan = document.getElementById("adminNoPesananInput").value.trim();
+          const hpsLinkInaproc = await readOptionalFile("adminFileHpsLinkInaproc");
+          const eFaktur = await readOptionalFile("adminFileEFaktur");
+          const suratPesanan = await readOptionalFile("adminFileSuratPesanan");
+          const bast = await readOptionalFile("adminFileBast");
+          const files = {};
+
+          if (hpsLinkInaproc) files.hpsLinkInaproc = hpsLinkInaproc;
+          if (eFaktur) files.eFaktur = eFaktur;
+          if (suratPesanan) files.suratPesanan = suratPesanan;
+          if (bast) files.bast = bast;
+
+          const noPesananChanged = noPesanan !== (target.noPesanan || "");
+          if (!noPesananChanged && !Object.keys(files).length) {
+            setAdminHpsMessage("Belum ada perubahan admin yang disimpan.", true);
+            return;
+          }
+
+          setAdminHpsMessage("Menyimpan input admin...", false);
+          google.script.run
+            .withSuccessHandler((res) => {
+              clearAdminInputs();
+              if (res && res.hps) {
+                upsertAdminPackage_(res.hps);
+                selectedAdminPackageId = res.hps.packageId;
+                renderAdminManager(allPackages);
+              }
+              closeAdminHpsModal();
+              setTopMessage("Input admin berhasil disimpan.", false);
+            })
+            .withFailureHandler((err) => {
+              setAdminHpsMessage(err && err.message ? err.message : "Input admin gagal disimpan.", true);
+            })
+            .adminSaveRestrictedData(sessionToken, {
+              packageId,
+              noPesanan,
+              files
+            });
+        } catch (err) {
+          setAdminHpsMessage(err && err.message ? err.message : "Gagal membaca dokumen admin.", true);
+        }
+      }
+
+      function deleteAdminDocument(packageId, fileKey, label) {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        const ok = window.confirm('Hapus dokumen "' + (label || fileKey) + '" dari HPS ini?');
+        if (!ok) return;
+
+        setAdminHpsMessage("Menghapus dokumen...", false);
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (res && res.hps) {
+              upsertAdminPackage_(res.hps);
+              selectedAdminPackageId = res.hps.packageId;
+              renderAdminManager(allPackages);
+              syncAdminManagerForm();
+            }
+            setAdminHpsMessage("Dokumen berhasil dihapus.", false);
+            setTopMessage("Dokumen berhasil dihapus.", false);
+          })
+          .withFailureHandler((err) => {
+            setAdminHpsMessage(err && err.message ? err.message : "Dokumen gagal dihapus.", true);
+          })
+          .deleteHpsDocument(sessionToken, packageId, fileKey);
+      }
+      window.deleteAdminDocument = deleteAdminDocument;
+
+      function readOptionalFile(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) return Promise.resolve(null);
+        const file = input.files && input.files[0];
+        if (!file) return Promise.resolve(null);
+
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64Data = String(reader.result).split(",")[1];
+            resolve({
+              originalFileName: file.name,
+              mimeType: file.type || "application/octet-stream",
+              base64Data
+            });
+          };
+          reader.onerror = () => reject(new Error("Gagal membaca dokumen: " + file.name));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function clearAdminInputs() {
+        ["adminFileHpsLinkInaproc", "adminFileEFaktur", "adminFileSuratPesanan", "adminFileBast"].forEach((id) => {
+          const input = document.getElementById(id);
+          if (input) input.value = "";
+        });
+      }
+
+      function resetAdminModalForm_() {
+        document.getElementById("adminNoPesananInput").value = "";
+        document.getElementById("adminSelectedHpsLabel").textContent = "Belum ada HPS yang dipilih.";
+        document.getElementById("adminHpsMeta").textContent = "Pilih HPS untuk melihat informasi saat ini.";
+        document.getElementById("adminDocUploadSlots").innerHTML = "";
+        document.getElementById("adminDocLinks").innerHTML = "";
+        setAdminHpsMessage("", false);
+        clearAdminInputs();
+      }
+
+      function setEventMessage(message, isError) {
+        const el = document.getElementById("eventMessage");
+        el.textContent = message || "";
+        el.className = "message " + (isError ? "error" : "ok");
+      }
+
+      function setAdminHpsMessage(message, isError) {
+        const el = document.getElementById("adminHpsMessage");
+        el.textContent = message || "";
+        el.className = "message " + (isError ? "error" : "ok");
+      }
+
+      function upsertAdminPackage_(nextPkg) {
+        const idx = allPackages.findIndex((item) => item.packageId === nextPkg.packageId);
+        if (idx === -1) {
+          allPackages.unshift(nextPkg);
+          return;
+        }
+        allPackages[idx] = nextPkg;
+      }
+
+      function upsertEvent_(nextEvent) {
+        const idx = allEvents.findIndex((item) => item.eventId === nextEvent.eventId);
+        if (idx === -1) {
+          allEvents.push(nextEvent);
+        } else {
+          allEvents[idx] = nextEvent;
+        }
+        allEvents.sort((a, b) => a.eventName.localeCompare(b.eventName));
+      }
+
+      function getNextEducationStatus_(status) {
+        return String(status || "").toUpperCase() === "SELESAI" ? "PROSES" : "SELESAI";
+      }
+
+      function getEducationStatusActionLabel_(status) {
+        return String(status || "").toUpperCase() === "SELESAI" ? "Ubah ke Proses" : "Tandai Selesai";
+      }
+
+      function getEducationStatusClass_(status) {
+        return String(status || "").toUpperCase() === "SELESAI" ? "done" : "proses";
+      }
+
+      function getHpsCountForEvent_(eventId) {
+        return allPackages.filter((pkg) => pkg.eventId === eventId).length;
+      }
+
+      function formatHpsCount_(count) {
+        return count + " HPS";
+      }
+
+      function renderDocLink(url, label) {
+        if (!url) return `<span class="hint">${escapeHtml(label)}: belum ada</span>`;
+        return `<a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${escapeHtml(label)}</a>`;
+      }
+
+      function renderAdminManagedDoc_(packageId, fileKey, url, label) {
+        if (!url) return `<span class="hint">${escapeHtml(label)}: belum ada</span>`;
+        return `
+          <span class="doc-item">
+            <a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${escapeHtml(label)}</a>
+            <button class="btn compact" type="button" onclick="deleteAdminDocument('${escapeAttr(packageId)}', '${escapeAttr(fileKey)}', '${escapeAttr(label)}')">Hapus</button>
+          </span>
+        `;
+      }
+
+      function renderAdminUploadSlots_(target) {
+        const wrap = document.getElementById("adminDocUploadSlots");
+        wrap.innerHTML = adminUploadSlotDefs
+          .map((slot) => {
+            const url = target[slot.urlField];
+            if (url) {
+              return `
+                <div class="doc-upload-slot">
+                  <div class="doc-upload-head">
+                    <div class="doc-upload-label">${escapeHtml(slot.label)}</div>
+                    <span class="status ready">Sudah Diunggah</span>
+                  </div>
+                  <div class="doc-upload-state">
+                    <a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">Lihat Dokumen</a>
+                    <button class="btn compact" type="button" onclick="deleteAdminDocument('${escapeAttr(target.packageId)}', '${escapeAttr(slot.key)}', '${escapeAttr(slot.label)}')">Hapus</button>
+                  </div>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="doc-upload-slot">
+                <div class="doc-upload-head">
+                  <div class="doc-upload-label">${escapeHtml(slot.label)}</div>
+                  <span class="hint">Belum diunggah</span>
+                </div>
+                <input id="${escapeAttr(slot.inputId)}" type="file" />
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function renderAdminFileLink(url, label) {
+        if (!url) return `<span class="missing">${escapeHtml(label)}: belum ada</span>`;
+        return `<a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${escapeHtml(label)}</a>`;
+      }
+
+      function renderAdminFolderLink(url) {
+        if (!url) return '<span class="missing">Folder belum ada</span>';
+        return `<a class="folder-action" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">Buka Folder Drive</a>`;
+      }
+
+      function renderPendingAccess(records) {
+        const wrap = document.getElementById("pendingAccessWrap");
+        const pending = records.filter((record) => record.status === "PENDING");
+        if (!pending.length) {
+          wrap.innerHTML = '<div class="empty">Tidak ada permintaan akses yang menunggu.</div>';
+          return;
+        }
+
         wrap.innerHTML = `
           <table>
             <thead>
               <tr>
+                <th>Email</th>
                 <th>Nama</th>
-                <th>Status</th>
-                <th>Created By</th>
+                <th>Diminta</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              ${events
-                .map((evt) => `
+              ${pending
+                .map((record) => `
                   <tr>
+                    <td>${escapeHtml(record.email || "-")}</td>
+                    <td>${escapeHtml(record.displayName || "-")}</td>
+                    <td>${escapeHtml(formatDateTime(record.requestedAt))}</td>
                     <td>
-                      <strong>${escapeHtml(evt.eventName)}</strong>
-                      <div class="hint mono">${escapeHtml(evt.eventId)}</div>
+                      <div class="action-row">
+                        <button class="btn primary" type="button" onclick="reviewAccess('${escapeAttr(record.email)}', 'APPROVED')">Setujui</button>
+                        <button class="btn" type="button" onclick="reviewAccess('${escapeAttr(record.email)}', 'DENIED')">Tolak</button>
+                      </div>
                     </td>
-                    <td>${escapeHtml(evt.status || "-")}</td>
-                    <td>${escapeHtml(evt.createdBy || "-")}</td>
                   </tr>
                 `)
                 .join("")}
@@ -381,45 +1509,220 @@
         `;
       }
 
-      function renderPackages(packages) {
-        const wrap = document.getElementById("packagesWrap");
-        if (!packages.length) {
-          wrap.innerHTML = '<div class="empty">Belum ada data HPS.</div>';
+      function renderAccess(records) {
+        const wrap = document.getElementById("accessWrap");
+        if (!records.length) {
+          wrap.innerHTML = '<div class="empty">Belum ada data akses.</div>';
           return;
         }
 
-        const latest = packages.slice(0, 5);
         wrap.innerHTML = `
           <table>
             <thead>
               <tr>
-                <th>HPS</th>
-                <th>Event</th>
+                <th>Email</th>
                 <th>Status</th>
+                <th>Ditinjau Oleh</th>
+                <th>Waktu Tinjau</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              ${latest
-                .map((pkg) => `
+              ${records
+                .map((record) => `
                   <tr>
                     <td>
-                      <strong>${escapeHtml(pkg.hpsName)}</strong>
-                      <div class="hint mono">${escapeHtml(pkg.packageId)}</div>
+                      <strong>${escapeHtml(record.email || "-")}</strong>
+                      <div class="hint mono">${escapeHtml(record.requestId || "-")}</div>
                     </td>
-                    <td>${escapeHtml(pkg.eventName || "-")}</td>
-                    <td>${escapeHtml(pkg.status || "-")}</td>
+                    <td>${escapeHtml(localizeStatus(record.status || "-"))}</td>
+                    <td>${escapeHtml(record.reviewedBy || "-")}</td>
+                    <td>${escapeHtml(formatDateTime(record.reviewedAt))}</td>
+                    <td>
+                      <button class="btn compact" type="button" onclick="deleteAccess('${escapeAttr(record.email)}')">Hapus</button>
+                    </td>
                   </tr>
                 `)
                 .join("")}
             </tbody>
           </table>
         `;
+      }
+
+      function reviewAccess(email, decision) {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        setTopMessage("Memproses keputusan akses...", false);
+        google.script.run
+          .withSuccessHandler(() => {
+            setTopMessage("Keputusan akses berhasil disimpan.", false);
+            refreshAdminData();
+          })
+          .withFailureHandler((err) => {
+            setTopMessage(err && err.message ? err.message : "Keputusan akses gagal disimpan.", true);
+          })
+          .reviewAccessRequest(sessionToken, email, decision);
+      }
+      window.reviewAccess = reviewAccess;
+
+      function deleteAccess(email) {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        const ok = window.confirm('Hapus akses untuk "' + (email || '-') + '"? Pengguna harus meminta akses lagi setelah dihapus.');
+        if (!ok) return;
+
+        setTopMessage("Menghapus akses...", false);
+        google.script.run
+          .withSuccessHandler(() => {
+            setTopMessage("Akses berhasil dihapus.", false);
+            refreshAdminData();
+          })
+          .withFailureHandler((err) => {
+            setTopMessage(err && err.message ? err.message : "Akses gagal dihapus.", true);
+          })
+          .deleteAccess(sessionToken, email);
+      }
+      window.deleteAccess = deleteAccess;
+
+      function renderNotifications(nextNotifications, unreadCount) {
+        if (Array.isArray(nextNotifications)) {
+          notifications = nextNotifications.slice();
+        }
+
+        const wrap = document.getElementById("notificationsWrap");
+        const summary = document.getElementById("notificationsSummary");
+        const badge = document.getElementById("notificationBadge");
+        const openBtn = document.getElementById("openNotificationsBtn");
+        const effectiveUnread = typeof unreadCount === "number"
+          ? unreadCount
+          : notifications.filter((item) => !item.isRead).length;
+
+        openBtn.style.display = sessionToken ? "inline-flex" : "none";
+        if (effectiveUnread > 0) {
+          badge.textContent = effectiveUnread > 99 ? "99+" : String(effectiveUnread);
+          badge.style.display = "inline-flex";
+        } else {
+          badge.style.display = "none";
+        }
+
+        summary.textContent = effectiveUnread
+          ? effectiveUnread + " notifikasi belum dibaca."
+          : "Tidak ada notifikasi baru.";
+
+        if (!notifications.length) {
+          wrap.innerHTML = '<div class="empty">Belum ada notifikasi.</div>';
+          return;
+        }
+
+        wrap.innerHTML = notifications
+          .map((item) => `
+            <div class="notification-item ${item.isRead ? "" : "unread"}">
+              <div class="notification-head">
+                <strong>${escapeHtml(item.message || "Notifikasi")}</strong>
+                <span class="status ${item.isRead ? "done" : "proses"}">${escapeHtml(item.isRead ? "Sudah Dibaca" : "Baru")}</span>
+              </div>
+              <div class="hint">${escapeHtml(item.eventName || "-")} | ${escapeHtml(item.hpsName || "-")}</div>
+              <div class="notification-meta">
+                <span class="hint">Pengunggah: ${escapeHtml(item.actorEmail || "-")}</span>
+                <span class="hint">${escapeHtml(formatDateTime(item.createdAt))}</span>
+              </div>
+            </div>
+          `)
+          .join("");
+      }
+
+      function refreshNotifications() {
+        if (!sessionToken) return;
+        google.script.run
+          .withSuccessHandler((result) => {
+            renderNotifications((result && result.notifications) || [], (result && result.unreadCount) || 0);
+          })
+          .withFailureHandler(() => {})
+          .getAdminNotifications(sessionToken);
+      }
+
+      function markAllNotificationsRead() {
+        if (!sessionToken) {
+          setTopMessage("Sesi admin tidak tersedia.", true);
+          return;
+        }
+
+        google.script.run
+          .withSuccessHandler(() => {
+            notifications = notifications.map((item) => Object.assign({}, item, { isRead: true }));
+            renderNotifications(notifications, 0);
+            setTopMessage("Semua notifikasi ditandai sudah dibaca.", false);
+          })
+          .withFailureHandler((err) => {
+            setTopMessage(err && err.message ? err.message : "Notifikasi gagal diperbarui.", true);
+          })
+          .markNotificationsRead(sessionToken, []);
+      }
+
+      function startNotificationPolling_() {
+        stopNotificationPolling_();
+        notificationPollHandle = window.setInterval(refreshNotifications, 20000);
+      }
+
+      function stopNotificationPolling_() {
+        if (!notificationPollHandle) return;
+        window.clearInterval(notificationPollHandle);
+        notificationPollHandle = null;
+      }
+
+      function localizeStatus(status) {
+        if (status === "READY") return "Siap";
+        if (status === "DRAFT") return "Draf";
+        if (status === "ERROR") return "Error";
+        if (status === "UNKNOWN") return "Tidak Diketahui";
+        if (status === "PROSES") return "Proses";
+        if (status === "SELESAI") return "Selesai";
+        if (status === "APPROVED") return "Disetujui";
+        if (status === "PENDING") return "Menunggu";
+        if (status === "DENIED") return "Ditolak";
+        if (status === "ACTIVE") return "Proses";
+        return status || "-";
       }
 
       function setTopMessage(message, isError) {
         const el = document.getElementById("topMessage");
         el.textContent = message || "";
         el.className = "message " + (isError ? "error" : "ok");
+      }
+
+      function setAuthMessage(message, isError) {
+        const el = document.getElementById("authMessage");
+        el.textContent = message || "";
+        el.className = "message " + (isError ? "error" : "ok");
+      }
+
+      function updateProfileChip_() {
+        const chip = document.getElementById("profileChip");
+        const emailEl = document.getElementById("profileEmail");
+
+        if (!currentProfile || !currentProfile.email) {
+          chip.style.display = "none";
+          return;
+        }
+
+        emailEl.textContent = currentProfile.email;
+        chip.style.display = "inline-flex";
+      }
+
+      function formatDateTime(value) {
+        if (!value) return "-";
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) return value;
+        return parsed.toLocaleString("id-ID", {
+          dateStyle: "medium",
+          timeStyle: "short"
+        });
       }
 
       function escapeHtml(text) {

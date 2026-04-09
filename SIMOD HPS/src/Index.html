@@ -3,22 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SIMOD HPS - Document Manager</title>
+    <title>SIMOD HPS - Pengelola Dokumen</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg-1: #f5f7ff;
-        --bg-2: #eef7f3;
-        --card: #ffffff;
-        --text: #0f172a;
-        --muted: #475569;
-        --line: #dbe2ef;
-        --brand: #0f766e;
-        --brand-strong: #115e59;
-        --warning: #92400e;
+        --bg-1: #f7faf7;
+        --bg-2: #eef5f1;
+        --bg-3: #dfe9e4;
+        --card: rgba(255, 255, 255, 0.9);
+        --card-strong: rgba(255, 255, 255, 0.98);
+        --text: #163127;
+        --muted: #61786d;
+        --line: rgba(53, 89, 73, 0.14);
+        --line-strong: rgba(53, 89, 73, 0.24);
+        --brand: #2f7d67;
+        --brand-strong: #225f4f;
+        --accent: #dff3ea;
+        --warning: #b67628;
+        --danger: #cb5a4b;
+        --shadow: 0 20px 48px rgba(27, 58, 47, 0.12);
       }
 
       * {
@@ -30,9 +36,10 @@
         font-family: "Space Grotesk", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(900px 500px at -10% -20%, #d9edff 0%, transparent 55%),
-          radial-gradient(900px 500px at 110% -20%, #d7f8e9 0%, transparent 55%),
-          linear-gradient(180deg, var(--bg-1), var(--bg-2));
+          radial-gradient(900px 560px at -10% -20%, rgba(81, 162, 132, 0.16) 0%, transparent 58%),
+          radial-gradient(700px 420px at 110% 0%, rgba(221, 241, 233, 0.9) 0%, transparent 52%),
+          linear-gradient(180deg, var(--bg-1), var(--bg-2) 72%);
+        min-height: 100vh;
       }
 
       .container {
@@ -46,21 +53,78 @@
       .card {
         background: var(--card);
         border: 1px solid var(--line);
-        border-radius: 16px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
       }
 
       .header {
-        padding: 20px;
+        padding: 24px;
+        background:
+          linear-gradient(135deg, rgba(61, 141, 116, 0.14), transparent 42%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 250, 246, 0.96));
       }
 
       .title {
         margin: 0;
         font-size: clamp(22px, 3.5vw, 34px);
+        letter-spacing: -0.03em;
       }
 
-      .subtitle {
-        margin: 8px 0 0;
+      .flow-steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .flow-step {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: linear-gradient(180deg, rgba(238, 248, 243, 0.96), rgba(255, 255, 255, 0.92));
+        color: var(--text);
+        box-shadow: inset 0 0 0 1px rgba(61, 141, 116, 0.05);
+      }
+
+      .flow-step-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(47, 125, 103, 0.12);
+        border: 1px solid rgba(47, 125, 103, 0.18);
+        color: var(--brand-strong);
+        font-size: 12px;
+        font-weight: 700;
+        flex: 0 0 auto;
+      }
+
+      .flow-step-text {
+        max-width: 290px;
         color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .flow-arrow {
+        display: inline-flex;
+        align-items: center;
+        color: rgba(53, 89, 73, 0.34);
+        font-size: 18px;
+        padding: 0 2px;
+      }
+
+      @media (max-width: 820px) {
+        .flow-arrow {
+          display: none;
+        }
       }
 
       .nav {
@@ -74,13 +138,20 @@
         display: inline-flex;
         align-items: center;
         border: 1px solid var(--line);
-        border-radius: 10px;
+        border-radius: 999px;
         padding: 10px 14px;
-        background: #fff;
+        background: rgba(255, 255, 255, 0.72);
         color: var(--text);
         text-decoration: none;
         font-size: 14px;
         font-weight: 600;
+        transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .nav a:hover {
+        background: rgba(47, 125, 103, 0.08);
+        border-color: var(--line-strong);
+        transform: translateY(-1px);
       }
 
       .stats {
@@ -97,10 +168,10 @@
       }
 
       .stat {
-        background: #f8fafc;
+        background: linear-gradient(180deg, rgba(236, 248, 241, 0.96), rgba(255, 255, 255, 0.98));
         border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px;
+        border-radius: 16px;
+        padding: 14px;
       }
 
       .stat .label {
@@ -109,9 +180,10 @@
       }
 
       .stat .value {
-        margin-top: 6px;
-        font-size: 22px;
+        margin-top: 8px;
+        font-size: 26px;
         font-weight: 700;
+        color: var(--brand-strong);
       }
 
       .layout {
@@ -120,24 +192,20 @@
         grid-template-columns: 1fr;
       }
 
-      @media (min-width: 1024px) {
-        .layout {
-          grid-template-columns: 420px 1fr;
-        }
-      }
-
       .stack {
         display: grid;
         gap: 16px;
       }
 
       .card {
-        padding: 16px;
+        padding: 18px;
+        background: linear-gradient(180deg, var(--card-strong), var(--card));
       }
 
       h2 {
         margin: 0 0 14px;
         font-size: 18px;
+        letter-spacing: -0.02em;
       }
 
       .field {
@@ -149,6 +217,7 @@
       label {
         font-size: 13px;
         color: var(--muted);
+        font-weight: 500;
       }
 
       input,
@@ -161,29 +230,52 @@
       select {
         width: 100%;
         border: 1px solid var(--line);
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 10px 12px;
-        background: #fff;
+        background: rgba(248, 252, 249, 0.95);
+        color: var(--text);
+        transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      input::placeholder {
+        color: rgba(97, 120, 109, 0.76);
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: rgba(47, 125, 103, 0.58);
+        box-shadow: 0 0 0 3px rgba(47, 125, 103, 0.14);
       }
 
       .btn {
-        border: 0;
-        border-radius: 10px;
+        border: 1px solid transparent;
+        border-radius: 12px;
         padding: 10px 14px;
-        background: var(--brand);
-        color: #fff;
+        background: linear-gradient(180deg, #348a71, #286c59);
+        color: #f8fdfa;
         cursor: pointer;
         font-weight: 600;
+        box-shadow: 0 14px 30px rgba(44, 103, 84, 0.2);
+        transition: transform 160ms ease, filter 160ms ease, border-color 160ms ease;
+      }
+
+      .btn:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
       }
 
       .btn:disabled {
         opacity: 0.65;
         cursor: not-allowed;
+        transform: none;
       }
 
       .btn.alt {
-        background: #e2e8f0;
-        color: #1e293b;
+        background: rgba(244, 250, 246, 0.94);
+        border-color: var(--line);
+        color: var(--text);
+        box-shadow: none;
       }
 
       .message {
@@ -192,7 +284,7 @@
       }
 
       .message.error {
-        color: #b91c1c;
+        color: var(--danger);
       }
 
       .message.ok {
@@ -214,15 +306,32 @@
       .event-btn {
         text-align: left;
         border: 1px solid var(--line);
-        background: #fff;
-        border-radius: 10px;
-        padding: 8px 10px;
+        background: rgba(244, 250, 246, 0.82);
+        border-radius: 14px;
+        padding: 12px 14px;
         cursor: pointer;
+        color: var(--text);
+        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+      }
+
+      .event-btn:hover {
+        border-color: var(--line-strong);
+        background: rgba(47, 125, 103, 0.06);
+        transform: translateY(-1px);
       }
 
       .event-btn.active {
-        border-color: #14b8a6;
-        background: #f0fdfa;
+        border-color: rgba(47, 125, 103, 0.34);
+        background: linear-gradient(180deg, rgba(47, 125, 103, 0.14), rgba(47, 125, 103, 0.05));
+        box-shadow: inset 0 0 0 1px rgba(47, 125, 103, 0.12);
+      }
+
+      .event-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
       }
 
       .hint {
@@ -239,7 +348,7 @@
 
       @media (min-width: 760px) {
         .filters {
-          grid-template-columns: 1fr 230px 170px auto;
+          grid-template-columns: 1fr 170px auto;
         }
       }
 
@@ -247,12 +356,26 @@
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
+        overflow: hidden;
+        border-radius: 16px;
+      }
+
+      .hps-table th:nth-child(1),
+      .hps-table td:nth-child(1) {
+        width: 28%;
+        min-width: 240px;
+      }
+
+      .hps-table th:nth-child(3),
+      .hps-table td:nth-child(3) {
+        width: 18%;
+        min-width: 180px;
       }
 
       th,
       td {
         text-align: left;
-        padding: 10px;
+        padding: 12px 10px;
         border-bottom: 1px solid var(--line);
         vertical-align: top;
       }
@@ -261,7 +384,16 @@
         color: var(--muted);
         font-size: 12px;
         text-transform: uppercase;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.08em;
+        background: rgba(244, 250, 246, 0.82);
+      }
+
+      tbody tr {
+        transition: background 160ms ease;
+      }
+
+      tbody tr:hover {
+        background: rgba(47, 125, 103, 0.04);
       }
 
       .status {
@@ -273,13 +405,27 @@
       }
 
       .status.ready {
-        background: #dcfce7;
-        color: #166534;
+        background: rgba(47, 125, 103, 0.12);
+        color: var(--brand-strong);
+        border: 1px solid rgba(47, 125, 103, 0.18);
       }
 
       .status.draft {
-        background: #fef3c7;
+        background: rgba(182, 118, 40, 0.12);
         color: var(--warning);
+        border: 1px solid rgba(182, 118, 40, 0.18);
+      }
+
+      .status.proses {
+        background: rgba(220, 145, 45, 0.12);
+        color: #996212;
+        border: 1px solid rgba(220, 145, 45, 0.18);
+      }
+
+      .status.done {
+        background: rgba(47, 125, 103, 0.12);
+        color: var(--brand-strong);
+        border: 1px solid rgba(47, 125, 103, 0.18);
       }
 
       .row-actions {
@@ -290,17 +436,56 @@
 
       .tiny {
         border: 1px solid var(--line);
-        background: #fff;
-        border-radius: 8px;
+        background: rgba(244, 250, 246, 0.9);
+        border-radius: 999px;
         padding: 6px 8px;
         cursor: pointer;
         text-decoration: none;
         color: inherit;
         font-size: 12px;
+        transition: border-color 160ms ease, background 160ms ease;
+      }
+
+      .tiny:hover {
+        border-color: var(--line-strong);
+        background: rgba(47, 125, 103, 0.08);
+      }
+
+      .folder-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 138px;
+        justify-content: center;
+        padding: 9px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(47, 125, 103, 0.18);
+        background: linear-gradient(180deg, rgba(225, 244, 236, 0.96), rgba(244, 250, 246, 0.98));
+        color: var(--brand-strong);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        transition: transform 160ms ease, filter 160ms ease, border-color 160ms ease;
+      }
+
+      .folder-action:hover {
+        border-color: rgba(47, 125, 103, 0.34);
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+
+      .folder-empty {
+        display: inline-block;
+        padding: 9px 12px;
+        border-radius: 12px;
+        border: 1px dashed var(--line);
+        color: rgba(97, 120, 109, 0.76);
+        font-size: 12px;
       }
 
       .missing {
-        color: #94a3b8;
+        color: rgba(97, 120, 109, 0.76);
         font-size: 12px;
       }
 
@@ -309,19 +494,159 @@
         text-align: center;
         color: var(--muted);
         border: 1px dashed var(--line);
-        border-radius: 12px;
+        border-radius: 16px;
+        background: rgba(248, 252, 249, 0.9);
+      }
+
+      .selection-card {
+        display: grid;
+        gap: 6px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: linear-gradient(180deg, rgba(239, 248, 243, 0.96), rgba(255, 255, 255, 0.98));
+      }
+
+      .selection-card strong {
+        font-size: 15px;
+      }
+
+      .modal-shell {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(30, 50, 41, 0.16);
+        z-index: 20;
+        backdrop-filter: blur(6px);
+      }
+
+      .modal-shell.open {
+        display: flex;
+      }
+
+      .modal {
+        width: min(560px, 100%);
+        max-height: min(90vh, 760px);
+        overflow: auto;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(244, 250, 246, 0.98));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: 0 28px 70px rgba(27, 58, 47, 0.18);
+        padding: 20px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .modal-title {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .modal-close {
+        border: 1px solid var(--line);
+        background: rgba(244, 250, 246, 0.94);
+        color: var(--text);
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .modal-note {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .section-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+
+      .section-title-row h2 {
+        margin: 0;
+      }
+
+      .auth-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .auth-status {
+        display: grid;
+        gap: 8px;
+      }
+
+      .auth-status strong {
+        font-size: 18px;
+      }
+
+      .profile-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(244, 250, 246, 0.94);
+        font-size: 13px;
+      }
+
+      .auth-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .auth-actions .field {
+        margin: 0;
+        min-width: min(320px, 100%);
       }
     </style>
   </head>
   <body>
     <div class="container">
       <section class="header">
-        <h1 class="title">SIMOD HPS - Document Manager</h1>
-        <p class="subtitle">
-          1) Tambah Pendidikan, 2) Pilih Pendidikan lalu tambah HPS + No. Pesanan, 3) Upload file HPS dan E-Faktur.
-        </p>
+        <h1 class="title">SIMOD HPS - Pengelola Dokumen</h1>
+        <div class="flow-steps" aria-label="Alur penggunaan aplikasi">
+          <div class="flow-step">
+            <span class="flow-step-num">1</span>
+            <span class="flow-step-text">Pilih Pendidikan yang sudah disiapkan admin</span>
+          </div>
+          <span class="flow-arrow" aria-hidden="true">›</span>
+          <div class="flow-step">
+            <span class="flow-step-num">2</span>
+            <span class="flow-step-text">Klik tombol Tambah HPS, lalu siapkan Nama HPS dan No. RUP</span>
+          </div>
+          <span class="flow-arrow" aria-hidden="true">›</span>
+          <div class="flow-step">
+            <span class="flow-step-num">3</span>
+            <span class="flow-step-text">Di dalam kolom Aksi, klik &quot;Unggah&quot; untuk mengunggah Dokumen HPS</span>
+          </div>
+        </div>
         <div class="nav">
-          <a href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">UI Admin</a>
+          <a href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">Halaman Admin</a>
+          <div class="profile-chip" id="profileChip" style="display:none;">
+            <span id="profileEmail">-</span>
+          </div>
         </div>
         <div id="topMessage" class="message"></div>
         <div class="stats">
@@ -334,82 +659,119 @@
             <div class="value" id="statHps">0</div>
           </div>
           <div class="stat">
-            <div class="label">READY</div>
+            <div class="label">Siap</div>
             <div class="value" id="statReady">0</div>
           </div>
           <div class="stat">
-            <div class="label">DRAFT</div>
+            <div class="label">Draf</div>
             <div class="value" id="statDraft">0</div>
           </div>
         </div>
       </section>
 
-      <div class="layout">
-        <section class="stack">
-          <div class="card">
-            <h2>1. Pendidikan</h2>
-            <div class="field">
-              <label for="eventNameInput">Nama Pendidikan</label>
-              <input id="eventNameInput" placeholder="Contoh: Pendidikan Militer" />
-            </div>
-            <button class="btn" id="addEventBtn" type="button">Tambah Pendidikan</button>
-            <div id="eventMessage" class="message"></div>
-            <div class="event-list" id="eventList"></div>
+      <section class="card auth-card" id="authCard">
+        <div class="auth-status">
+          <div class="hint">Akses aplikasi</div>
+          <strong id="authTitle">Masukkan email untuk melanjutkan</strong>
+          <div class="hint" id="authSubtitle">Aplikasi hanya akan membuka data jika email Anda sudah disetujui admin.</div>
+          <div id="authMessage" class="message"></div>
+        </div>
+        <div class="auth-actions">
+          <div class="field">
+            <label for="authEmailInput">Email</label>
+            <input id="authEmailInput" type="email" placeholder="nama@email.com" />
           </div>
+          <div class="field">
+            <label for="authNameInput">Nama (opsional)</label>
+            <input id="authNameInput" placeholder="Nama Anda" />
+          </div>
+          <button class="btn" id="startSessionBtn" type="button">Lanjutkan</button>
+          <button class="btn" id="requestAccessBtn" type="button" style="display:none;">Minta Akses</button>
+        </div>
+      </section>
 
-          <div class="card">
-            <h2>2. Tambah HPS</h2>
-            <div class="hint" id="selectedEventLabel">Pilih pendidikan dulu.</div>
-            <div class="field" style="margin-top:10px;">
-              <label for="hpsNameInput">HPS Name (wajib)</label>
-              <input id="hpsNameInput" placeholder="Contoh: HPS Pengadaan Seragam" />
-            </div>
-            <div class="field">
-              <label for="rupNumberInput">RUP Number (opsional)</label>
-              <input id="rupNumberInput" placeholder="Contoh: RUP-2026-002" />
-            </div>
-            <div class="field">
-              <label for="noPesananInput">No. Pesanan (wajib)</label>
-              <input id="noPesananInput" placeholder="Contoh: SP-2026-019" />
-            </div>
-            <button class="btn" id="createHpsBtn" type="button">Simpan HPS</button>
-            <div id="hpsMessage" class="message"></div>
-          </div>
-
-          <div class="card">
-            <h2>3. Upload Files</h2>
-            <div class="field">
-              <label for="hpsSelect">Pilih HPS</label>
-              <select id="hpsSelect"></select>
-            </div>
-            <div class="field">
-              <label for="fileHps">File HPS</label>
-              <input id="fileHps" type="file" />
-            </div>
-            <div class="field">
-              <label for="fileEFaktur">File E-Faktur</label>
-              <input id="fileEFaktur" type="file" />
-            </div>
-            <button class="btn" id="uploadFilesBtn" type="button">Upload Files</button>
-            <div class="hint">Bisa upload bertahap. Status jadi READY jika No. Pesanan terisi + file HPS dan E-Faktur lengkap.</div>
-            <div id="uploadMessage" class="message"></div>
-          </div>
+      <div class="layout" id="appShell" style="display:none;">
+        <section class="card">
+          <h2>Daftar Pendidikan</h2>
+          <div class="hint" style="margin-bottom:12px;">Daftar pendidikan dikelola oleh admin. Pilih salah satu pendidikan di bawah ini untuk melihat daftar HPS.</div>
+          <div class="event-list" id="eventList"></div>
         </section>
 
         <section class="card">
-          <h2>Daftar HPS</h2>
+          <div class="section-title-row">
+            <h2>Daftar HPS</h2>
+            <button class="btn" id="openCreateHpsBtn" type="button">Tambah HPS</button>
+          </div>
+          <div class="selection-card" style="margin-bottom:14px;">
+            <div class="hint">Pendidikan aktif</div>
+            <strong id="selectedEventLabel">Pilih pendidikan dulu.</strong>
+            <div class="hint" id="listContextLabel">Menampilkan HPS sesuai pendidikan yang dipilih di daftar pendidikan di atas.</div>
+          </div>
           <div class="filters">
-            <input id="searchInput" placeholder="Cari event, RUP, HPS, no. pesanan, package id..." />
-            <select id="eventFilter"></select>
+            <input id="searchInput" placeholder="Cari pendidikan, RUP, HPS, no. surat pesanan, id paket..." />
             <select id="statusFilter">
-              <option value="ALL">All Status</option>
-              <option value="READY">READY</option>
-              <option value="DRAFT">DRAFT</option>
+              <option value="ALL">Semua Status</option>
+              <option value="READY">Siap</option>
+              <option value="DRAFT">Draf</option>
             </select>
-            <button class="btn alt" id="refreshBtn" type="button">Refresh</button>
+            <button class="btn alt" id="refreshBtn" type="button">Muat Ulang</button>
           </div>
           <div id="tableWrap"></div>
         </section>
+      </div>
+    </div>
+
+    <div class="modal-shell" id="createHpsModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createHpsTitle">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="createHpsTitle">Tambah HPS</h2>
+            <p class="modal-note" id="createHpsNote">Simpan metadata HPS terlebih dahulu. No. Surat Pesanan diisi admin, dan dokumen diunggah bertahap dari daftar HPS.</p>
+          </div>
+          <button class="btn modal-close" id="closeCreateHpsBtn" type="button">Tutup</button>
+        </div>
+        <div class="selection-card">
+          <div class="hint">Pendidikan aktif</div>
+          <strong id="createHpsEventLabel">-</strong>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label for="hpsNameInput">Nama HPS (wajib)</label>
+          <input id="hpsNameInput" placeholder="Contoh: HPS Pengadaan Seragam" />
+        </div>
+        <div class="field">
+          <label for="rupNumberInput">No. RUP (wajib)</label>
+          <input id="rupNumberInput" placeholder="Contoh: RUP-2026-002" />
+        </div>
+        <div id="hpsMessage" class="message"></div>
+        <div class="modal-actions">
+          <button class="btn alt" id="cancelCreateHpsBtn" type="button">Batal</button>
+          <button class="btn" id="createHpsBtn" type="button">Simpan HPS</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-shell" id="uploadFilesModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="uploadFilesTitle">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="uploadFilesTitle">Unggah Dokumen</h2>
+            <p class="modal-note">Dari halaman pengguna, dokumen yang dapat diunggah hanya Dokumen HPS. E-Faktur, Surat Pesanan, HPS + LINK INAPROC, dan BAST diunggah admin. Dokumen lama akan diganti jika Anda unggah ulang.</p>
+          </div>
+          <button class="btn modal-close" id="closeUploadFilesBtn" type="button">Tutup</button>
+        </div>
+        <div class="field">
+          <label for="hpsSelect">Pilih HPS</label>
+          <select id="hpsSelect"></select>
+        </div>
+        <div class="field">
+          <label for="fileHps">Dokumen HPS</label>
+          <input id="fileHps" type="file" />
+        </div>
+        <div id="uploadMessage" class="message"></div>
+        <div class="modal-actions">
+          <button class="btn alt" id="cancelUploadFilesBtn" type="button">Batal</button>
+          <button class="btn" id="uploadFilesBtn" type="button">Unggah Dokumen</button>
+        </div>
       </div>
     </div>
 
@@ -417,19 +779,91 @@
       let allEvents = [];
       let allPackages = [];
       let selectedEventId = "";
+      let editingPackageId = "";
+      let sessionToken = "";
+      let currentProfile = null;
 
-      document.getElementById("addEventBtn").addEventListener("click", handleAddEvent);
       document.getElementById("createHpsBtn").addEventListener("click", handleCreateHps);
       document.getElementById("uploadFilesBtn").addEventListener("click", handleUploadFiles);
+      document.getElementById("openCreateHpsBtn").addEventListener("click", openCreateHpsModal);
+      document.getElementById("closeCreateHpsBtn").addEventListener("click", closeCreateHpsModal);
+      document.getElementById("cancelCreateHpsBtn").addEventListener("click", closeCreateHpsModal);
+      document.getElementById("closeUploadFilesBtn").addEventListener("click", closeUploadModal);
+      document.getElementById("cancelUploadFilesBtn").addEventListener("click", closeUploadModal);
       document.getElementById("refreshBtn").addEventListener("click", refreshData);
       document.getElementById("searchInput").addEventListener("input", renderTableFromFilters);
-      document.getElementById("eventFilter").addEventListener("change", renderTableFromFilters);
       document.getElementById("statusFilter").addEventListener("change", renderTableFromFilters);
       document.getElementById("hpsSelect").addEventListener("change", () => setUploadMessage("", false));
+      document.getElementById("startSessionBtn").addEventListener("click", startUserSession);
+      document.getElementById("requestAccessBtn").addEventListener("click", requestAccess);
+      document.getElementById("createHpsModal").addEventListener("click", handleModalBackdropClick);
+      document.getElementById("uploadFilesModal").addEventListener("click", handleModalBackdropClick);
+      document.addEventListener("keydown", handleGlobalKeydown);
 
-      refreshData();
+      bootAuth();
+
+      function bootAuth() {
+        var savedToken = sessionStorage.getItem("simod_user_session") || "";
+        if (!savedToken) {
+          setAuthState(
+            "Masukkan email untuk melanjutkan",
+            "Gunakan email yang akan dipakai untuk akses. Jika belum disetujui, kirim permintaan akses.",
+            false
+          );
+          return;
+        }
+        google.script.run
+          .withSuccessHandler((result) => {
+            sessionToken = savedToken;
+            currentProfile = result.profile || null;
+            updateProfileChip_();
+            document.getElementById("authEmailInput").value = (currentProfile && currentProfile.email) || "";
+            document.getElementById("authNameInput").value = (currentProfile && currentProfile.name) || "";
+            applyAccessState_(result.access || {});
+          })
+          .withFailureHandler(() => {
+            sessionStorage.removeItem("simod_user_session");
+            sessionToken = "";
+            currentProfile = null;
+            updateProfileChip_();
+            setAuthState(
+              "Masukkan email untuk melanjutkan",
+              "Sesi sebelumnya sudah berakhir. Masukkan email lagi untuk melanjutkan.",
+              false
+            );
+          })
+          .getSessionState(savedToken);
+      }
+
+      function startUserSession() {
+        const email = document.getElementById("authEmailInput").value.trim();
+        const name = document.getElementById("authNameInput").value.trim();
+        if (!email) {
+          setAuthMessage("Email wajib diisi.", true);
+          return;
+        }
+
+        setAuthState("Memeriksa akses...", "Mohon tunggu sebentar.", false);
+        google.script.run
+          .withSuccessHandler((result) => {
+            sessionToken = result.sessionToken || "";
+            currentProfile = result.profile || null;
+            sessionStorage.setItem("simod_user_session", sessionToken);
+            updateProfileChip_();
+            applyAccessState_(result.access || {});
+          })
+          .withFailureHandler((err) => {
+            const message = err && err.message ? err.message : "Gagal memulai sesi pengguna.";
+            setAuthState("Masuk gagal", message, true);
+          })
+          .startUserSession(email, name);
+      }
 
       function refreshData() {
+        if (!sessionToken) {
+          setTopMessage("Sesi belum aktif. Masukkan email terlebih dahulu.", true);
+          return;
+        }
         google.script.run
           .withSuccessHandler((data) => {
             if (!data || !data.configured) {
@@ -437,7 +871,7 @@
               allPackages = [];
               syncUiFromState({ totalEvents: 0, totalHps: 0, readyHps: 0, draftHps: 0 });
               setTopMessage(
-                (data && data.warning) || "Configuration is missing in backend constants / script properties.",
+                (data && data.warning) || "Konfigurasi backend belum diisi di konstanta atau Script Properties.",
                 true
               );
               return;
@@ -449,30 +883,7 @@
             syncUiFromState(data.stats || null);
           })
           .withFailureHandler(showTopError)
-          .getBootstrapData();
-      }
-
-      function handleAddEvent() {
-        const input = document.getElementById("eventNameInput");
-        const name = input.value.trim();
-        if (!name) return setEventMessage("Nama pendidikan wajib diisi.", true);
-
-        setEventMessage("Menyimpan pendidikan...", false);
-        google.script.run
-          .withSuccessHandler((res) => {
-            input.value = "";
-            if (res && res.event) {
-              allEvents.push(res.event);
-              allEvents.sort((a, b) => a.eventName.localeCompare(b.eventName));
-              selectedEventId = res.event.eventId;
-            }
-            setEventMessage("Pendidikan berhasil ditambahkan.", false);
-            syncUiFromState();
-          })
-          .withFailureHandler((err) => {
-            setEventMessage(err && err.message ? err.message : "Gagal tambah pendidikan.", true);
-          })
-          .addEducation(name);
+          .getBootstrapData(sessionToken);
       }
 
       function handleCreateHps() {
@@ -480,34 +891,48 @@
           return setHpsMessage("Pilih pendidikan terlebih dahulu.", true);
         }
 
+        const isEditMode = !!editingPackageId;
         const hpsName = document.getElementById("hpsNameInput").value.trim();
         const rupNumber = document.getElementById("rupNumberInput").value.trim();
-        const noPesanan = document.getElementById("noPesananInput").value.trim();
-        if (!hpsName) return setHpsMessage("HPS name wajib diisi.", true);
-        if (!noPesanan) return setHpsMessage("No. Pesanan wajib diisi.", true);
+        if (!hpsName) return setHpsMessage("Nama HPS wajib diisi.", true);
+        if (!rupNumber) return setHpsMessage("No. RUP wajib diisi.", true);
 
-        setHpsMessage("Menyimpan HPS...", false);
-        google.script.run
+        setHpsMessage(isEditMode ? "Menyimpan perubahan HPS..." : "Menyimpan HPS...", false);
+        const request = google.script.run
           .withSuccessHandler((res) => {
-            document.getElementById("hpsNameInput").value = "";
-            document.getElementById("rupNumberInput").value = "";
-            document.getElementById("noPesananInput").value = "";
-            setHpsMessage("HPS berhasil dibuat. Lanjut upload file.", false);
+            resetCreateHpsForm_();
+            setHpsMessage(isEditMode ? "Perubahan HPS berhasil disimpan." : "HPS berhasil dibuat.", false);
             if (res && res.hps) {
               selectedEventId = res.hps.eventId;
               upsertPackage_(res.hps);
             }
             syncUiFromState();
+            closeCreateHpsModal();
+            setTopMessage(
+              isEditMode
+                ? "Perubahan HPS berhasil disimpan."
+                : "HPS berhasil dibuat. Unggah dokumen tersedia dari tombol Unggah di daftar HPS.",
+              false
+            );
           })
           .withFailureHandler((err) => {
-            setHpsMessage(err && err.message ? err.message : "Gagal membuat HPS.", true);
-          })
-          .createHps({
-            eventId: selectedEventId,
-            hpsName,
-            rupNumber,
-            noPesanan
+            setHpsMessage(err && err.message ? err.message : (isEditMode ? "Gagal menyimpan perubahan HPS." : "Gagal membuat HPS."), true);
           });
+
+        if (isEditMode) {
+          request.updateHps(sessionToken, {
+            packageId: editingPackageId,
+            hpsName,
+            rupNumber
+          });
+          return;
+        }
+
+        request.createHps(sessionToken, {
+          eventId: selectedEventId,
+          hpsName,
+          rupNumber
+        });
       }
 
       async function handleUploadFiles() {
@@ -517,20 +942,17 @@
         try {
           const files = {};
           const hps = await readOptionalFile("fileHps");
-          const eFaktur = await readOptionalFile("fileEFaktur");
 
           if (hps) files.hps = hps;
-          if (eFaktur) files.eFaktur = eFaktur;
 
           if (!Object.keys(files).length) {
-            return setUploadMessage("Pilih minimal 1 file untuk diupload.", true);
+            return setUploadMessage("Pilih minimal 1 dokumen untuk diunggah.", true);
           }
 
-          setUploadMessage("Uploading files...", false);
+          setUploadMessage("Sedang mengunggah dokumen. Jika sudah ada dokumen lama, sistem akan menggantinya.", false);
           google.script.run
             .withSuccessHandler((res) => {
               clearUploadInputs();
-              setUploadMessage("Upload berhasil.", false);
               if (res && res.hps) {
                 upsertPackage_(res.hps);
                 syncUiFromState();
@@ -538,16 +960,18 @@
               } else {
                 syncUiFromState();
               }
+              closeUploadModal();
+              setTopMessage("Unggah berhasil. Dokumen lama diganti jika sebelumnya sudah ada.", false);
             })
             .withFailureHandler((err) => {
-              setUploadMessage(err && err.message ? err.message : "Upload gagal.", true);
+              setUploadMessage(err && err.message ? err.message : "Unggah gagal.", true);
             })
-            .uploadHpsFiles({
+            .uploadHpsFiles(sessionToken, {
               packageId,
               files
             });
         } catch (err) {
-          setUploadMessage(err && err.message ? err.message : "Gagal membaca file.", true);
+          setUploadMessage(err && err.message ? err.message : "Gagal membaca dokumen.", true);
         }
       }
 
@@ -566,15 +990,78 @@
               base64Data
             });
           };
-          reader.onerror = () => reject(new Error("Failed to read file: " + file.name));
+          reader.onerror = () => reject(new Error("Gagal membaca dokumen: " + file.name));
           reader.readAsDataURL(file);
         });
       }
 
       function clearUploadInputs() {
-        ["fileHps", "fileEFaktur"].forEach((id) => {
+        ["fileHps"].forEach((id) => {
           document.getElementById(id).value = "";
         });
+      }
+
+      function openCreateHpsModal() {
+        if (!selectedEventId) {
+          setTopMessage("Pilih pendidikan terlebih dahulu sebelum menambah HPS.", true);
+          return;
+        }
+
+        resetCreateHpsForm_();
+        updateCreateHpsModalUi_();
+        setTopMessage("", false);
+        setHpsMessage("", false);
+        document.getElementById("createHpsEventLabel").textContent = getSelectedEventName_();
+        setModalOpen_("createHpsModal", true);
+        document.getElementById("hpsNameInput").focus();
+      }
+
+      function closeCreateHpsModal() {
+        setModalOpen_("createHpsModal", false);
+        resetCreateHpsForm_();
+      }
+
+      function openUploadModal(preferredPackageId) {
+        const availablePackages = getPackagesForSelection_();
+        if (!availablePackages.length) {
+          setTopMessage("Belum ada HPS untuk pendidikan yang dipilih.", true);
+          return;
+        }
+
+        setTopMessage("", false);
+        setUploadMessage("", false);
+        clearUploadInputs();
+        renderHpsSelect(preferredPackageId);
+        setModalOpen_("uploadFilesModal", true);
+        document.getElementById("hpsSelect").focus();
+      }
+
+      function closeUploadModal() {
+        setModalOpen_("uploadFilesModal", false);
+        clearUploadInputs();
+      }
+
+      function handleModalBackdropClick(event) {
+        if (event.target.id === "createHpsModal") {
+          closeCreateHpsModal();
+          return;
+        }
+
+        if (event.target.id === "uploadFilesModal") {
+          closeUploadModal();
+        }
+      }
+
+      function handleGlobalKeydown(event) {
+        if (event.key !== "Escape") return;
+        closeCreateHpsModal();
+        closeUploadModal();
+      }
+
+      function setModalOpen_(modalId, isOpen) {
+        const modal = document.getElementById(modalId);
+        modal.classList.toggle("open", isOpen);
+        modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
       }
 
       function renderEventList() {
@@ -587,7 +1074,15 @@
         wrap.innerHTML = allEvents
           .map((evt) => {
             const active = evt.eventId === selectedEventId ? "active" : "";
-            return `<button class="event-btn ${active}" onclick="selectEvent('${escapeAttr(evt.eventId)}')">${escapeHtml(evt.eventName)}</button>`;
+            return `
+              <button class="event-btn ${active}" onclick="selectEvent('${escapeAttr(evt.eventId)}')">
+                <strong>${escapeHtml(evt.eventName)}</strong>
+                <div class="event-meta">
+                  <span class="status ${escapeAttr(getEducationStatusClass_(evt.status))}">${escapeHtml(localizeStatus(evt.status || "-"))}</span>
+                  <span class="hint">${escapeHtml(formatHpsCount_(getHpsCountForEvent_(evt.eventId)))}</span>
+                </div>
+              </button>
+            `;
           })
           .join("");
       }
@@ -602,20 +1097,22 @@
       window.selectEvent = selectEvent;
 
       function renderSelectedEventLabel() {
-        const evt = allEvents.find((item) => item.eventId === selectedEventId);
-        document.getElementById("selectedEventLabel").textContent = evt
-          ? "Pendidikan terpilih: " + evt.eventName
-          : "Pilih pendidikan dulu.";
+        const eventName = getSelectedEventName_();
+        document.getElementById("selectedEventLabel").textContent = eventName || "Pilih pendidikan dulu.";
+        document.getElementById("createHpsEventLabel").textContent = eventName || "-";
+        document.getElementById("listContextLabel").textContent = eventName
+          ? "Menampilkan daftar HPS untuk " + eventName.toLowerCase() + "."
+          : "Pilih pendidikan di daftar pendidikan di atas untuk menampilkan daftar HPS.";
       }
 
       function renderHpsSelect(preferredPackageId) {
         const select = document.getElementById("hpsSelect");
         const current = preferredPackageId || select.value;
-        const packages = allPackages.filter((pkg) => (selectedEventId ? pkg.eventId === selectedEventId : true));
+        const packages = getPackagesForSelection_();
         const options = packages.map((pkg) => {
           const rupText = pkg.rupNumber ? " | " + pkg.rupNumber : "";
           const pesananText = pkg.noPesanan ? " | " + pkg.noPesanan : "";
-          return `<option value="${escapeAttr(pkg.packageId)}">${escapeHtml(pkg.hpsName)}${escapeHtml(rupText)}${escapeHtml(pesananText)} (${escapeHtml(pkg.status)})</option>`;
+          return `<option value="${escapeAttr(pkg.packageId)}">${escapeHtml(pkg.hpsName)}${escapeHtml(rupText)}${escapeHtml(pesananText)} (${escapeHtml(localizeStatus(pkg.status))})</option>`;
         });
 
         if (!packages.length) {
@@ -628,29 +1125,13 @@
         select.value = hasCurrent ? current : packages[0].packageId;
       }
 
-      function renderFilters() {
-        const eventFilter = document.getElementById("eventFilter");
-        const current = eventFilter.value;
-        const options = ['<option value="ALL">All Pendidikan</option>']
-          .concat(
-            allEvents.map((evt) => `<option value="${escapeAttr(evt.eventId)}">${escapeHtml(evt.eventName)}</option>`)
-          )
-          .join("");
-
-        eventFilter.innerHTML = options;
-        if (current && allEvents.some((evt) => evt.eventId === current)) {
-          eventFilter.value = current;
-        }
-      }
-
       function renderTableFromFilters() {
         const query = document.getElementById("searchInput").value.toLowerCase().trim();
         const status = document.getElementById("statusFilter").value;
-        const eventFilter = document.getElementById("eventFilter").value;
 
         const filtered = allPackages.filter((pkg) => {
           const statusMatch = status === "ALL" ? true : pkg.status === status;
-          const eventMatch = eventFilter === "ALL" ? true : pkg.eventId === eventFilter;
+          const eventMatch = selectedEventId ? pkg.eventId === selectedEventId : false;
           const haystack = [pkg.packageId, pkg.eventName, pkg.rupNumber, pkg.hpsName, pkg.noPesanan].join(" ").toLowerCase();
           const queryMatch = query ? haystack.includes(query) : true;
           return statusMatch && eventMatch && queryMatch;
@@ -667,16 +1148,16 @@
         }
 
         wrap.innerHTML = `
-          <table>
+          <table class="hps-table">
             <thead>
               <tr>
-                <th>Event</th>
+                <th>Nama HPS</th>
                 <th>RUP</th>
-                <th>No. Pesanan</th>
-                <th>HPS Name</th>
-                <th>Files</th>
+                <th>No. Surat Pesanan</th>
+                <th>Dokumen</th>
                 <th>Status</th>
                 <th>Folder</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -685,22 +1166,30 @@
                   const statusClass = pkg.status === "READY" ? "ready" : "draft";
                   return `
                     <tr>
-                      <td>${escapeHtml(pkg.eventName)}</td>
-                      <td>${escapeHtml(pkg.rupNumber || "-")}</td>
-                      <td>${escapeHtml(pkg.noPesanan || "-")}</td>
                       <td>
                         <div><strong>${escapeHtml(pkg.hpsName)}</strong></div>
                         <div class="hint">${escapeHtml(pkg.packageId)}</div>
                       </td>
+                      <td>${escapeHtml(pkg.rupNumber || "-")}</td>
+                      <td>${escapeHtml(pkg.noPesanan || "-")}</td>
                       <td>
                         <div class="row-actions">
                           ${renderFileLink(pkg.hpsFileUrl, "HPS")}
+                          ${renderFileLink(pkg.hpsLinkInaprocFileUrl, "HPS + LINK INAPROC")}
                           ${renderFileLink(pkg.eFakturFileUrl, "E-Faktur")}
+                          ${renderFileLink(pkg.suratPesananFileUrl, "Surat Pesanan")}
+                          ${renderFileLink(pkg.bastFileUrl, "BAST")}
                         </div>
                       </td>
-                      <td><span class="status ${statusClass}">${escapeHtml(pkg.status)}</span></td>
+                      <td><span class="status ${statusClass}">${escapeHtml(localizeStatus(pkg.status))}</span></td>
                       <td>
-                        ${pkg.packageFolderUrl ? `<a class="tiny" target="_blank" href="${escapeAttr(pkg.packageFolderUrl)}">Open Folder</a>` : '<span class="missing">-</span>'}
+                        ${renderFolderLink(pkg.packageFolderUrl)}
+                      </td>
+                      <td>
+                        <div class="row-actions">
+                          <button class="tiny" type="button" onclick="openEditHpsModalForPackage('${escapeAttr(pkg.packageId)}')">Edit</button>
+                          <button class="tiny" type="button" onclick="openUploadModalForPackage('${escapeAttr(pkg.packageId)}')">Unggah</button>
+                        </div>
                       </td>
                     </tr>
                   `;
@@ -712,8 +1201,13 @@
       }
 
       function renderFileLink(url, label) {
-        if (!url) return `<span class="missing">${escapeHtml(label)}: missing</span>`;
-        return `<a class="tiny" target="_blank" href="${escapeAttr(url)}">${escapeHtml(label)}</a>`;
+        if (!url) return `<span class="missing">${escapeHtml(label)}: belum ada</span>`;
+        return `<a class="tiny" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${escapeHtml(label)}</a>`;
+      }
+
+      function renderFolderLink(url) {
+        if (!url) return '<span class="folder-empty">Folder belum ada</span>';
+        return `<a class="folder-action" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">Buka Folder Drive</a>`;
       }
 
       function updateStats(stats) {
@@ -736,12 +1230,6 @@
         el.className = "message " + (isError ? "error" : "ok");
       }
 
-      function setEventMessage(message, isError) {
-        const el = document.getElementById("eventMessage");
-        el.textContent = message || "";
-        el.className = "message " + (isError ? "error" : "ok");
-      }
-
       function setHpsMessage(message, isError) {
         const el = document.getElementById("hpsMessage");
         el.textContent = message || "";
@@ -754,8 +1242,100 @@
         el.className = "message " + (isError ? "error" : "ok");
       }
 
+      function requestAccess() {
+        if (!sessionToken) {
+          setAuthState("Masukkan email terlebih dahulu", "Sesi belum tersedia.", true);
+          return;
+        }
+
+        document.getElementById("requestAccessBtn").disabled = true;
+        document.getElementById("authMessage").textContent = "Mengirim permintaan akses...";
+        google.script.run
+          .withSuccessHandler((result) => {
+            document.getElementById("requestAccessBtn").disabled = false;
+            applyAccessState_({
+              status: result.status || "PENDING",
+              approved: false,
+              canRequest: false
+            });
+            setAuthMessage(result.message || "Permintaan akses berhasil dikirim.", false);
+          })
+          .withFailureHandler((err) => {
+            document.getElementById("requestAccessBtn").disabled = false;
+            setAuthMessage(err && err.message ? err.message : "Permintaan akses gagal dikirim.", true);
+          })
+          .submitAccessRequest(sessionToken);
+      }
+
+      function applyAccessState_(access) {
+        const status = access.status || "NOT_REQUESTED";
+        const approved = !!access.approved;
+        const requestBtn = document.getElementById("requestAccessBtn");
+
+        if (approved) {
+          document.getElementById("authCard").style.display = "none";
+          document.getElementById("appShell").style.display = "grid";
+          setTopMessage("Masuk sebagai " + (currentProfile && currentProfile.email ? currentProfile.email : "pengguna terverifikasi") + ".", false);
+          refreshData();
+          return;
+        }
+
+        document.getElementById("authCard").style.display = "grid";
+        document.getElementById("appShell").style.display = "none";
+        requestBtn.style.display = access.canRequest ? "inline-flex" : "none";
+
+        if (status === "PENDING") {
+          setAuthState(
+            "Permintaan akses sedang ditinjau",
+            "Email Anda sudah tercatat dan menunggu persetujuan admin. Setelah disetujui, muat ulang halaman ini.",
+            false
+          );
+          return;
+        }
+
+        if (status === "DENIED") {
+          setAuthState(
+            "Permintaan akses ditolak",
+            "Anda bisa mengirim permintaan baru jika diperlukan.",
+            true
+          );
+          return;
+        }
+
+        setAuthState(
+          "Akun belum memiliki akses",
+          "Email Anda sudah tercatat di sesi ini. Kirim permintaan akses agar admin dapat menyetujui email Anda.",
+          false
+        );
+      }
+
+      function setAuthState(title, subtitle, isError) {
+        document.getElementById("authTitle").textContent = title || "";
+        document.getElementById("authSubtitle").textContent = subtitle || "";
+        setAuthMessage("", isError);
+      }
+
+      function setAuthMessage(message, isError) {
+        const el = document.getElementById("authMessage");
+        el.textContent = message || "";
+        el.className = "message " + (isError ? "error" : "ok");
+      }
+
+      function updateProfileChip_() {
+        const chip = document.getElementById("profileChip");
+        const emailEl = document.getElementById("profileEmail");
+
+        if (!currentProfile || !currentProfile.email) {
+          chip.style.display = "none";
+          return;
+        }
+
+        emailEl.textContent = currentProfile.email;
+        chip.style.display = "inline-flex";
+      }
+
       function showTopError(err) {
-        const msg = err && err.message ? err.message : String(err || "Unknown error");
+        const msg = err && err.message ? err.message : String(err || "Terjadi kesalahan yang tidak diketahui");
         const lower = msg.toLowerCase();
         const isAuthError = lower.includes("permission") || lower.includes("authorization") || lower.includes("access denied");
         const isMissingItemError =
@@ -772,15 +1352,15 @@
             .withSuccessHandler((auth) => {
               if (auth && auth.url) {
                 setTopMessageHtml(
-                  `Authorization required. <a target="_blank" rel="noopener noreferrer" href="${escapeAttr(auth.url)}">Authorize Access</a>, then reload this page.`,
+                  `Otorisasi diperlukan. <a target="_blank" rel="noopener noreferrer" href="${escapeAttr(auth.url)}">Otorisasi Akses</a>, lalu muat ulang halaman ini.`,
                   true
                 );
                 return;
               }
-              setTopMessage("Authorization required by Google. Open this web app directly and approve access, then reload.", true);
+              setTopMessage("Google meminta otorisasi. Buka web app ini secara langsung, setujui akses, lalu muat ulang.", true);
             })
             .withFailureHandler(() => {
-              setTopMessage("Authorization required by Google. Open this web app directly and approve access, then reload.", true);
+              setTopMessage("Google meminta otorisasi. Buka web app ini secara langsung, setujui akses, lalu muat ulang.", true);
             })
             .getAuthorizationState();
           return;
@@ -805,7 +1385,6 @@
         renderEventList();
         renderSelectedEventLabel();
         renderHpsSelect();
-        renderFilters();
         renderTableFromFilters();
       }
 
@@ -827,6 +1406,83 @@
         }
         allPackages[idx] = nextPkg;
       }
+
+      function localizeStatus(status) {
+        if (status === "READY") return "Siap";
+        if (status === "DRAFT") return "Draf";
+        if (status === "PROSES") return "Proses";
+        if (status === "SELESAI") return "Selesai";
+        if (status === "ACTIVE") return "Proses";
+        return status || "-";
+      }
+
+      function getEducationStatusClass_(status) {
+        return String(status || "").toUpperCase() === "SELESAI" ? "done" : "proses";
+      }
+
+      function getHpsCountForEvent_(eventId) {
+        return allPackages.filter((pkg) => pkg.eventId === eventId).length;
+      }
+
+      function formatHpsCount_(count) {
+        return count + " HPS";
+      }
+
+      function getPackagesForSelection_() {
+        return allPackages.filter((pkg) => (selectedEventId ? pkg.eventId === selectedEventId : true));
+      }
+
+      function getSelectedEventName_() {
+        const evt = allEvents.find((item) => item.eventId === selectedEventId);
+        return evt ? "Pendidikan terpilih: " + evt.eventName : "";
+      }
+
+      function resetCreateHpsForm_() {
+        editingPackageId = "";
+        document.getElementById("hpsNameInput").value = "";
+        document.getElementById("rupNumberInput").value = "";
+        updateCreateHpsModalUi_();
+      }
+
+      function updateCreateHpsModalUi_() {
+        const isEditMode = !!editingPackageId;
+        document.getElementById("createHpsTitle").textContent = isEditMode ? "Edit HPS" : "Tambah HPS";
+        document.getElementById("createHpsNote").textContent = isEditMode
+          ? "Perbarui metadata HPS di sini. No. Surat Pesanan tetap dikelola admin, dan dokumen diunggah dari daftar HPS."
+          : "Simpan metadata HPS terlebih dahulu. No. Surat Pesanan diisi admin, dan dokumen diunggah dari daftar HPS.";
+        document.getElementById("createHpsBtn").textContent = isEditMode ? "Simpan Perubahan" : "Simpan HPS";
+      }
+
+      function openEditHpsModalForPackage(packageId) {
+        const target = allPackages.find((pkg) => pkg.packageId === packageId);
+        if (!target) {
+          setTopMessage("Data HPS tidak ditemukan.", true);
+          return;
+        }
+
+        selectedEventId = target.eventId;
+        editingPackageId = target.packageId;
+        document.getElementById("hpsNameInput").value = target.hpsName || "";
+        document.getElementById("rupNumberInput").value = target.rupNumber || "";
+        updateCreateHpsModalUi_();
+        setTopMessage("", false);
+        setHpsMessage("", false);
+        syncUiFromState();
+        document.getElementById("createHpsEventLabel").textContent = getSelectedEventName_();
+        setModalOpen_("createHpsModal", true);
+        document.getElementById("hpsNameInput").focus();
+      }
+      window.openEditHpsModalForPackage = openEditHpsModalForPackage;
+
+      function openUploadModalForPackage(packageId) {
+        const target = allPackages.find((pkg) => pkg.packageId === packageId);
+        if (target) {
+          selectedEventId = target.eventId;
+          syncUiFromState();
+        }
+        openUploadModal(packageId);
+      }
+      window.openUploadModalForPackage = openUploadModalForPackage;
 
       function escapeHtml(text) {
         return String(text || "")
