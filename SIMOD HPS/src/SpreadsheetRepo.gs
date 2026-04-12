@@ -15,7 +15,7 @@ function getRequiredProperty(key) {
   var value = '';
   if (key === 'SHEET_ID') value = config.sheetId;
   if (key === 'DRIVE_FOLDER_ID') value = config.driveFolderId;
-  if (!value) throw new Error('Missing configuration value: ' + key + '.');
+  if (!value) throw new Error('Nilai konfigurasi tidak ditemukan: ' + key + '.');
   return value;
 }
 
@@ -153,6 +153,13 @@ function getHpsSheet() {
   return sheet;
 }
 
+function getNotificationSheet() {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName(CONFIG.NOTIFICATION_SHEET_NAME);
+  if (!sheet) sheet = ss.insertSheet(CONFIG.NOTIFICATION_SHEET_NAME);
+  return sheet;
+}
+
 function ensureSheetHeaders(sheet, headers) {
   var range = sheet.getRange(1, 1, 1, headers.length);
   var current = range.getValues()[0];
@@ -171,6 +178,8 @@ function ensureSheetHeaders(sheet, headers) {
 function setupSheets() {
   ensureSheetHeaders(getEventSheet(), CONFIG.EVENT_HEADERS);
   ensureSheetHeaders(getHpsSheet(), CONFIG.HPS_HEADERS);
+  ensureSheetHeaders(getAccessSheet(), CONFIG.ACCESS_HEADERS);
+  ensureSheetHeaders(getNotificationSheet(), CONFIG.NOTIFICATION_HEADERS);
 }
 
 function listEducationEvents() {
@@ -224,9 +233,9 @@ function listHpsPackages(filters) {
     });
 }
 
-function addEducationRecord(eventName) {
+function addEducationRecord(eventName, actorEmail) {
   eventName = sanitizeText(eventName);
-  if (!eventName) throw new Error('Event name is required');
+  if (!eventName) throw new Error('Nama pendidikan wajib diisi.');
 
   setupSheets();
 
@@ -234,16 +243,16 @@ function addEducationRecord(eventName) {
   var dup = existing.some(function (evt) {
     return evt.eventName.toLowerCase() === eventName.toLowerCase();
   });
-  if (dup) throw new Error('Event already exists');
+  if (dup) throw new Error('Pendidikan sudah ada.');
 
   var now = new Date();
   var row = [
     buildId('EDU', now),
     eventName,
-    Session.getActiveUser().getEmail() || 'unknown',
+    sanitizeText(actorEmail) || 'unknown',
     now,
     now,
-    'ACTIVE'
+    'PROSES'
   ];
 
   getEventSheet().appendRow(row);
@@ -254,21 +263,74 @@ function addEducationRecord(eventName) {
   };
 }
 
-function createHpsRecord(payload) {
+function updateEducationStatusRecord(eventId, nextStatus, actorEmail) {
+  eventId = sanitizeText(eventId);
+  nextStatus = normalizeEventStatus(nextStatus);
+
+  if (!eventId) throw new Error('Pendidikan wajib dipilih.');
+  if (nextStatus !== 'PROSES' && nextStatus !== 'SELESAI') {
+    throw new Error('Status pendidikan tidak valid.');
+  }
+
+  setupSheets();
+
+  var found = findEventRowByEventId_(eventId);
+  if (!found.row) throw new Error('Pendidikan tidak ditemukan.');
+
+  var row = found.row;
+  row[4] = new Date();
+  row[5] = nextStatus;
+
+  found.sheet.getRange(found.rowNumber, 1, 1, CONFIG.EVENT_HEADERS.length).setValues([row]);
+
+  return {
+    ok: true,
+    event: mapEventRow(row),
+    updatedBy: sanitizeText(actorEmail) || 'unknown'
+  };
+}
+
+function deleteEducationRecord(eventId, actorEmail) {
+  eventId = sanitizeText(eventId);
+  if (!eventId) throw new Error('Pendidikan wajib dipilih.');
+
+  setupSheets();
+
+  var found = findEventRowByEventId_(eventId);
+  if (!found.row) throw new Error('Pendidikan tidak ditemukan.');
+
+  var linkedPackages = listHpsPackages({ eventId: eventId });
+  if (linkedPackages.length) {
+    throw new Error('Pendidikan tidak bisa dihapus karena masih memiliki ' + linkedPackages.length + ' HPS.');
+  }
+
+  var row = found.row;
+  row[4] = new Date();
+  row[5] = 'ARCHIVED';
+
+  found.sheet.getRange(found.rowNumber, 1, 1, CONFIG.EVENT_HEADERS.length).setValues([row]);
+
+  return {
+    ok: true,
+    eventId: eventId,
+    archivedBy: sanitizeText(actorEmail) || 'unknown'
+  };
+}
+
+function createHpsRecord(payload, actorEmail) {
   payload = payload || {};
   var eventId = sanitizeText(payload.eventId);
   var hpsName = sanitizeText(payload.hpsName);
   var rupNumber = sanitizeText(payload.rupNumber);
-  var noPesanan = sanitizeText(payload.noPesanan);
 
-  if (!eventId) throw new Error('eventId is required');
-  if (!hpsName) throw new Error('HPS name is required');
-  if (!noPesanan) throw new Error('No. Pesanan is required');
+  if (!eventId) throw new Error('Pendidikan wajib dipilih.');
+  if (!hpsName) throw new Error('Nama HPS wajib diisi.');
+  if (!rupNumber) throw new Error('No. RUP wajib diisi.');
 
   setupSheets();
 
   var event = getEventById(eventId);
-  if (!event) throw new Error('Event not found');
+  if (!event) throw new Error('Pendidikan tidak ditemukan.');
 
   var folderInfo = ensurePackageFolder(event.eventName, rupNumber, hpsName);
   var now = new Date();
@@ -281,7 +343,11 @@ function createHpsRecord(payload) {
     hpsName,
     '',
     '',
-    noPesanan,
+    '',
+    '',
+    '',
+    '',
+    '',
     '',
     '',
     '',
@@ -289,7 +355,7 @@ function createHpsRecord(payload) {
     '',
     folderInfo.folder.getId(),
     folderInfo.folder.getUrl(),
-    Session.getActiveUser().getEmail() || 'unknown',
+    sanitizeText(actorEmail) || 'unknown',
     now,
     'DRAFT',
     now
@@ -303,50 +369,33 @@ function createHpsRecord(payload) {
   };
 }
 
-function uploadHpsFilesRecord(payload) {
+function updateHpsRecord(payload) {
   payload = payload || {};
   var packageId = sanitizeText(payload.packageId);
-  var files = payload.files || {};
+  var hpsName = sanitizeText(payload.hpsName);
+  var rupNumber = sanitizeText(payload.rupNumber);
 
-  if (!packageId) throw new Error('packageId is required');
-
-  var hasAnyFile = Object.keys(CONFIG.FILE_COLUMNS).some(function (key) {
-    return !!files[key];
-  });
-  if (!hasAnyFile) throw new Error('At least one file is required');
+  if (!packageId) throw new Error('Paket HPS wajib dipilih.');
+  if (!hpsName) throw new Error('Nama HPS wajib diisi.');
+  if (!rupNumber) throw new Error('No. RUP wajib diisi.');
 
   setupSheets();
 
-  var sheet = getHpsSheet();
-  var data = sheet.getDataRange().getValues();
-  var rowNumber = -1;
-  var row = null;
+  var found = findHpsRowByPackageId_(packageId);
+  if (!found.row) throw new Error('Paket HPS tidak ditemukan.');
 
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][0] === packageId) {
-      rowNumber = i + 1;
-      row = data[i];
-      break;
-    }
-  }
-
-  if (rowNumber === -1 || !row) throw new Error('HPS package not found');
+  var row = found.row;
+  row[3] = rupNumber;
+  row[4] = hpsName;
 
   var packageFolder = getPackageFolder(row);
+  packageFolder.setName(buildPackageFolderName_(rupNumber, hpsName));
+  applyLinkSharingIfEnabled(packageFolder);
+  row[17] = packageFolder.getId();
+  row[18] = packageFolder.getUrl();
+  row[22] = new Date();
 
-  Object.keys(CONFIG.FILE_COLUMNS).forEach(function (key) {
-    if (!files[key]) return;
-
-    validateFilePayload(files[key], CONFIG.FILE_COLUMNS[key].label);
-    var uploaded = uploadFileToFolder(packageFolder, files[key], CONFIG.FILE_COLUMNS[key].prefix);
-    row[CONFIG.FILE_COLUMNS[key].idIndex] = uploaded.fileId;
-    row[CONFIG.FILE_COLUMNS[key].urlIndex] = uploaded.url;
-  });
-
-  row[17] = hasAllRequiredFiles(row) ? 'READY' : 'DRAFT';
-  row[18] = new Date();
-
-  sheet.getRange(rowNumber, 1, 1, CONFIG.HPS_HEADERS.length).setValues([row]);
+  found.sheet.getRange(found.rowNumber, 1, 1, CONFIG.HPS_HEADERS.length).setValues([row]);
 
   return {
     ok: true,
@@ -354,8 +403,196 @@ function uploadHpsFilesRecord(payload) {
   };
 }
 
+function updateAdminRestrictedRecord(payload) {
+  payload = payload || {};
+  var packageId = sanitizeText(payload.packageId);
+  var files = payload.files || {};
+  var hasAnyFile = Object.keys(files).some(function (key) {
+    return !!files[key];
+  });
+  var hasNoPesananField = Object.prototype.hasOwnProperty.call(payload, 'noPesanan');
+  var noPesanan = sanitizeText(payload.noPesanan);
+
+  if (!packageId) throw new Error('Paket HPS wajib dipilih.');
+  if (!hasAnyFile && !hasNoPesananField) {
+    throw new Error('Tidak ada perubahan admin yang dikirim.');
+  }
+
+  setupSheets();
+
+  var found = findHpsRowByPackageId_(packageId);
+  if (!found.row) throw new Error('Paket HPS tidak ditemukan.');
+
+  var row = found.row;
+  if (hasNoPesananField) {
+    row[7] = noPesanan;
+  }
+
+  if (hasAnyFile) {
+    var packageFolder = getPackageFolder(row);
+
+    Object.keys(files).forEach(function (key) {
+      if (!files[key]) return;
+
+      var columnConfig = CONFIG.FILE_COLUMNS[key];
+      var previousFileId = sanitizeText(row[columnConfig.idIndex]);
+
+      validateFilePayload(files[key], columnConfig.label);
+      var uploaded = uploadFileToFolder(packageFolder, files[key], columnConfig.prefix);
+      row[columnConfig.idIndex] = uploaded.fileId;
+      row[columnConfig.urlIndex] = uploaded.url;
+      trashDriveFileById_(previousFileId);
+    });
+  }
+
+  row[21] = hasAllRequiredFiles(row) ? 'READY' : 'DRAFT';
+  row[22] = new Date();
+
+  found.sheet.getRange(found.rowNumber, 1, 1, CONFIG.HPS_HEADERS.length).setValues([row]);
+
+  return {
+    ok: true,
+    hps: mapHpsRow(row)
+  };
+}
+
+function deleteHpsDocumentRecord(packageId, fileKey) {
+  packageId = sanitizeText(packageId);
+  fileKey = sanitizeText(fileKey);
+
+  if (!packageId) throw new Error('Paket HPS wajib dipilih.');
+  if (!fileKey || !CONFIG.FILE_COLUMNS[fileKey]) {
+    throw new Error('Jenis dokumen tidak valid.');
+  }
+
+  setupSheets();
+
+  var found = findHpsRowByPackageId_(packageId);
+  if (!found.row) throw new Error('Paket HPS tidak ditemukan.');
+
+  var row = found.row;
+  var columnConfig = CONFIG.FILE_COLUMNS[fileKey];
+  var previousFileId = sanitizeText(row[columnConfig.idIndex]);
+  var previousFileUrl = sanitizeText(row[columnConfig.urlIndex]);
+
+  if (!previousFileId && !previousFileUrl) {
+    throw new Error('Dokumen ' + columnConfig.label + ' belum ada.');
+  }
+
+  trashDriveFileById_(previousFileId);
+  row[columnConfig.idIndex] = '';
+  row[columnConfig.urlIndex] = '';
+  row[21] = hasAllRequiredFiles(row) ? 'READY' : 'DRAFT';
+  row[22] = new Date();
+
+  found.sheet.getRange(found.rowNumber, 1, 1, CONFIG.HPS_HEADERS.length).setValues([row]);
+
+  return {
+    ok: true,
+    hps: mapHpsRow(row),
+    deletedFileKey: fileKey
+  };
+}
+
+function uploadHpsFilesRecord(payload, actorEmail) {
+  payload = payload || {};
+  var packageId = sanitizeText(payload.packageId);
+  var files = payload.files || {};
+
+  if (!packageId) throw new Error('Paket HPS wajib dipilih.');
+
+  var hasAnyFile = Object.keys(CONFIG.FILE_COLUMNS).some(function (key) {
+    return !!files[key];
+  });
+  if (!hasAnyFile) throw new Error('Pilih minimal satu dokumen untuk diunggah.');
+
+  setupSheets();
+
+  var found = findHpsRowByPackageId_(packageId);
+  if (!found.row) throw new Error('Paket HPS tidak ditemukan.');
+
+  var row = found.row;
+  var packageFolder = getPackageFolder(row);
+
+  Object.keys(CONFIG.FILE_COLUMNS).forEach(function (key) {
+    if (!files[key]) return;
+
+    var columnConfig = CONFIG.FILE_COLUMNS[key];
+    var previousFileId = sanitizeText(row[columnConfig.idIndex]);
+
+    validateFilePayload(files[key], columnConfig.label);
+    var uploaded = uploadFileToFolder(packageFolder, files[key], columnConfig.prefix);
+    row[columnConfig.idIndex] = uploaded.fileId;
+    row[columnConfig.urlIndex] = uploaded.url;
+    trashDriveFileById_(previousFileId);
+  });
+
+  row[21] = hasAllRequiredFiles(row) ? 'READY' : 'DRAFT';
+  row[22] = new Date();
+
+  found.sheet.getRange(found.rowNumber, 1, 1, CONFIG.HPS_HEADERS.length).setValues([row]);
+
+  if (files.hps) {
+    createNotification_('USER_HPS_UPLOAD', {
+      packageId: row[0],
+      eventId: row[1],
+      eventName: row[2],
+      hpsName: row[4],
+      actorEmail: sanitizeText(actorEmail) || sanitizeText(row[19]) || 'unknown',
+      message: 'Pengguna mengunggah Dokumen HPS.'
+    });
+  }
+
+  return {
+    ok: true,
+    hps: mapHpsRow(row)
+  };
+}
+
+function findHpsRowByPackageId_(packageId) {
+  var sheet = getHpsSheet();
+  var data = sheet.getDataRange().getValues();
+
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === packageId) {
+      return {
+        sheet: sheet,
+        rowNumber: i + 1,
+        row: data[i]
+      };
+    }
+  }
+
+  return {
+    sheet: sheet,
+    rowNumber: -1,
+    row: null
+  };
+}
+
+function findEventRowByEventId_(eventId) {
+  var sheet = getEventSheet();
+  var data = sheet.getDataRange().getValues();
+
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === eventId) {
+      return {
+        sheet: sheet,
+        rowNumber: i + 1,
+        row: data[i]
+      };
+    }
+  }
+
+  return {
+    sheet: sheet,
+    rowNumber: -1,
+    row: null
+  };
+}
+
 function getPackageFolder(row) {
-  var existingFolderId = sanitizeText(row[13]);
+  var existingFolderId = sanitizeText(row[17]);
   if (existingFolderId) {
     try {
       return DriveApp.getFolderById(existingFolderId);
@@ -365,19 +602,15 @@ function getPackageFolder(row) {
   }
 
   var created = ensurePackageFolder(row[2], row[3], row[4]).folder;
-  row[13] = created.getId();
-  row[14] = created.getUrl();
+  row[17] = created.getId();
+  row[18] = created.getUrl();
   return created;
 }
 
 function ensurePackageFolder(eventName, rupNumber, hpsName) {
   var root = ensureDriveRootFolder();
   var eventFolder = getOrCreateSubfolder(root, sanitizeFolderName(eventName));
-
-  var packageName = rupNumber
-    ? sanitizeFolderName(rupNumber + ' - ' + hpsName)
-    : sanitizeFolderName(hpsName);
-
+  var packageName = buildPackageFolderName_(rupNumber, hpsName);
   var packageFolder = getOrCreateSubfolder(eventFolder, packageName);
   applyLinkSharingIfEnabled(root);
   applyLinkSharingIfEnabled(eventFolder);
@@ -404,6 +637,21 @@ function uploadFileToFolder(folder, filePayload, prefix) {
     fileId: file.getId(),
     url: file.getUrl()
   };
+}
+
+function buildPackageFolderName_(rupNumber, hpsName) {
+  return rupNumber
+    ? sanitizeFolderName(rupNumber + ' - ' + hpsName)
+    : sanitizeFolderName(hpsName);
+}
+
+function trashDriveFileById_(fileId) {
+  if (!fileId) return;
+  try {
+    DriveApp.getFileById(fileId).setTrashed(true);
+  } catch (err) {
+    // Abaikan jika file lama sudah tidak ada atau tidak bisa dihapus.
+  }
 }
 
 function applyLinkSharingIfEnabled(item) {

@@ -3,14 +3,14 @@ function sanitizeText(value) {
 }
 
 function sanitizeFileName(name) {
-  return (name || 'untitled')
+  return (name || 'tanpa-nama')
     .replace(/[\\/:*?"<>|]/g, '-')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 function sanitizeFolderName(name) {
-  return sanitizeFileName(name || 'untitled-folder').substring(0, 120);
+  return sanitizeFileName(name || 'folder-tanpa-nama').substring(0, 120);
 }
 
 function toIsoString(value) {
@@ -29,18 +29,27 @@ function buildId(prefix, now) {
 }
 
 function validateFilePayload(filePayload, label) {
-  if (!filePayload) throw new Error(label + ' file is required');
-  if (!filePayload.base64Data) throw new Error(label + ' base64Data is required');
-  if (!filePayload.mimeType) throw new Error(label + ' mimeType is required');
-  if (!filePayload.originalFileName) throw new Error(label + ' originalFileName is required');
+  if (!filePayload) throw new Error('File ' + label + ' wajib diisi.');
+  if (!filePayload.base64Data) throw new Error('Data base64 untuk file ' + label + ' wajib ada.');
+  if (!filePayload.mimeType) throw new Error('Tipe MIME untuk file ' + label + ' wajib ada.');
+  if (!filePayload.originalFileName) throw new Error('Nama file asli untuk file ' + label + ' wajib ada.');
 }
 
 function hasAllRequiredFiles(row) {
   return !!(
     sanitizeText(row[5]) &&
-    sanitizeText(row[7]) &&
-    sanitizeText(row[11])
+    sanitizeText(row[9]) &&
+    sanitizeText(row[11]) &&
+    sanitizeText(row[13]) &&
+    sanitizeText(row[15])
   );
+}
+
+function normalizeEventStatus(value) {
+  var status = sanitizeText(value).toUpperCase();
+  if (!status || status === 'ACTIVE') return 'PROSES';
+  if (status === 'PROSES' || status === 'SELESAI' || status === 'ARCHIVED') return status;
+  return status;
 }
 
 function mapEventRow(row) {
@@ -50,7 +59,7 @@ function mapEventRow(row) {
     createdBy: row[2],
     createdAt: toIsoString(row[3]),
     updatedAt: toIsoString(row[4]),
-    status: row[5]
+    status: normalizeEventStatus(row[5])
   };
 }
 
@@ -64,14 +73,20 @@ function mapHpsRow(row) {
     hpsFileId: row[5],
     hpsFileUrl: row[6],
     noPesanan: row[7],
+    hpsLinkInaprocFileId: row[9],
+    hpsLinkInaprocFileUrl: row[10],
     eFakturFileId: row[11],
     eFakturFileUrl: row[12],
-    packageFolderId: row[13],
-    packageFolderUrl: row[14],
-    createdBy: row[15],
-    createdAt: toIsoString(row[16]),
-    status: row[17],
-    updatedAt: toIsoString(row[18]),
+    suratPesananFileId: row[13],
+    suratPesananFileUrl: row[14],
+    bastFileId: row[15],
+    bastFileUrl: row[16],
+    packageFolderId: row[17],
+    packageFolderUrl: row[18],
+    createdBy: row[19],
+    createdAt: toIsoString(row[20]),
+    status: row[21],
+    updatedAt: toIsoString(row[22]),
     filesReady: hasAllRequiredFiles(row)
   };
 }

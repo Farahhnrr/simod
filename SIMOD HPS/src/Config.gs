@@ -1,10 +1,14 @@
 const CONFIG = {
   EVENT_SHEET_NAME: 'Pendidikan_Events',
   HPS_SHEET_NAME: 'HPS_Packages',
+  ACCESS_SHEET_NAME: 'Access_Control',
+  NOTIFICATION_SHEET_NAME: 'Notification_Log',
 
   // Static IDs (recommended). Leave empty to use Script Properties.
-  STATIC_SHEET_ID: '1xxpVUWpqk4f1tHMixml6fGhEqNUjFbKaKVDNp5z8cGo',
-  STATIC_DRIVE_FOLDER_ID: '1NbfNtue54-Rxq3tZzFWm-wym4Z2j0Wk3',
+  STATIC_SHEET_ID: '1AO0-M0LdIudc6_CKLXTdVL9XfclB3IOqfGqg3w0pbWc',
+  STATIC_DRIVE_FOLDER_ID: '1ZwoMKvIhl1rJJH2vNHXPjMRDmBPmPSFW',
+  // Used by the simplified admin page login. Change this before deploying.
+  ADMIN_ACCESS_CODE: '202020',
 
   EVENT_HEADERS: [
     'EventId',
@@ -24,11 +28,15 @@ const CONFIG = {
     'HpsFileId',
     'HpsFileUrl',
     'NoPesanan',
-    'LegacySuratPesananFileUrl',
-    'LegacySuratBastFileId',
-    'LegacySuratBastFileUrl',
+    'LegacyInaprocLink',
+    'HpsLinkInaprocFileId',
+    'HpsLinkInaprocFileUrl',
     'EFakturFileId',
     'EFakturFileUrl',
+    'SuratPesananFileId',
+    'SuratPesananFileUrl',
+    'BastFileId',
+    'BastFileUrl',
     'PackageFolderId',
     'PackageFolderUrl',
     'CreatedBy',
@@ -37,10 +45,41 @@ const CONFIG = {
     'UpdatedAt'
   ],
 
+  ACCESS_HEADERS: [
+    'RequestId',
+    'Email',
+    'DisplayName',
+    'Status',
+    'RequestedAt',
+    'ReviewedAt',
+    'ReviewedBy',
+    'LastAuthenticatedAt'
+  ],
+
+  NOTIFICATION_HEADERS: [
+    'NotificationId',
+    'Type',
+    'PackageId',
+    'EventId',
+    'EventName',
+    'HpsName',
+    'ActorEmail',
+    'Message',
+    'IsRead',
+    'CreatedAt',
+    'ReadAt'
+  ],
+
   FILE_COLUMNS: {
     hps: { idIndex: 5, urlIndex: 6, label: 'HPS', prefix: 'HPS' },
-    eFaktur: { idIndex: 11, urlIndex: 12, label: 'E-Faktur', prefix: 'E-Faktur' }
+    hpsLinkInaproc: { idIndex: 9, urlIndex: 10, label: 'HPS + LINK INAPROC', prefix: 'HPS + LINK INAPROC' },
+    eFaktur: { idIndex: 11, urlIndex: 12, label: 'E-Faktur', prefix: 'E-Faktur' },
+    suratPesanan: { idIndex: 13, urlIndex: 14, label: 'Surat Pesanan', prefix: 'Surat Pesanan' },
+    bast: { idIndex: 15, urlIndex: 16, label: 'BAST', prefix: 'BAST' }
   },
+
+  USER_UPLOAD_KEYS: ['hps'],
+  ADMIN_UPLOAD_KEYS: ['hpsLinkInaproc', 'eFaktur', 'suratPesanan', 'bast'],
 
   ADMIN_ALLOWED_EMAILS: [
     'bahrobah@gmail.com',
@@ -48,5 +87,6 @@ const CONFIG = {
   ],
 
   // Optional behavior beyond gs_doc_manager base pattern.
-  SHARE_WITH_LINK: true
+  SHARE_WITH_LINK: true,
+  SESSION_TTL_SECONDS: 21600
 };
