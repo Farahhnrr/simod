@@ -498,6 +498,25 @@
         background: rgba(248, 252, 249, 0.9);
       }
 
+      .list-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .list-summary {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .list-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
       .selection-card {
         display: grid;
         gap: 6px;
@@ -644,6 +663,7 @@
         </div>
         <div class="nav">
           <a href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">Halaman Admin</a>
+          <button class="btn alt" id="logoutBtn" type="button" style="display:none;">Keluar</button>
           <div class="profile-chip" id="profileChip" style="display:none;">
             <span id="profileEmail">-</span>
           </div>
@@ -694,6 +714,7 @@
         <section class="card">
           <h2>Daftar Pendidikan</h2>
           <div class="hint" style="margin-bottom:12px;">Daftar pendidikan dikelola oleh admin. Pilih salah satu pendidikan di bawah ini untuk melihat daftar HPS.</div>
+          <input id="eventSearchInput" placeholder="Cari pendidikan..." style="margin-bottom:12px;" />
           <div class="event-list" id="eventList"></div>
         </section>
 
@@ -782,6 +803,9 @@
       let editingPackageId = "";
       let sessionToken = "";
       let currentProfile = null;
+      let userEventVisibleCount = 5;
+      let userEventSearch = "";
+      const USER_EVENT_BATCH_SIZE = 5;
 
       document.getElementById("createHpsBtn").addEventListener("click", handleCreateHps);
       document.getElementById("uploadFilesBtn").addEventListener("click", handleUploadFiles);
@@ -791,11 +815,13 @@
       document.getElementById("closeUploadFilesBtn").addEventListener("click", closeUploadModal);
       document.getElementById("cancelUploadFilesBtn").addEventListener("click", closeUploadModal);
       document.getElementById("refreshBtn").addEventListener("click", refreshData);
+      document.getElementById("eventSearchInput").addEventListener("input", handleUserEventSearch);
       document.getElementById("searchInput").addEventListener("input", renderTableFromFilters);
       document.getElementById("statusFilter").addEventListener("change", renderTableFromFilters);
       document.getElementById("hpsSelect").addEventListener("change", () => setUploadMessage("", false));
       document.getElementById("startSessionBtn").addEventListener("click", startUserSession);
       document.getElementById("requestAccessBtn").addEventListener("click", requestAccess);
+      document.getElementById("logoutBtn").addEventListener("click", logoutUser);
       document.getElementById("createHpsModal").addEventListener("click", handleModalBackdropClick);
       document.getElementById("uploadFilesModal").addEventListener("click", handleModalBackdropClick);
       document.addEventListener("keydown", handleGlobalKeydown);
@@ -1071,7 +1097,20 @@
           return;
         }
 
-        wrap.innerHTML = allEvents
+        const filteredEvents = allEvents.filter((evt) => {
+          if (!userEventSearch) return true;
+          return String((evt && evt.eventName) || "").toLowerCase().includes(userEventSearch);
+        });
+
+        if (!filteredEvents.length) {
+          wrap.innerHTML = '<div class="empty">Tidak ada pendidikan yang cocok.</div>';
+          return;
+        }
+
+        const visibleState = buildVisibleItems_(filteredEvents, userEventVisibleCount, USER_EVENT_BATCH_SIZE);
+        userEventVisibleCount = visibleState.visibleCount;
+
+        wrap.innerHTML = visibleState.items
           .map((evt) => {
             const active = evt.eventId === selectedEventId ? "active" : "";
             return `
@@ -1084,7 +1123,25 @@
               </button>
             `;
           })
-          .join("");
+          .join("") + renderListControls_("showMoreUserEvents", "resetUserEvents", visibleState, "pendidikan");
+      }
+
+      function showMoreUserEvents() {
+        userEventVisibleCount += USER_EVENT_BATCH_SIZE;
+        renderEventList();
+      }
+      window.showMoreUserEvents = showMoreUserEvents;
+
+      function resetUserEvents() {
+        userEventVisibleCount = USER_EVENT_BATCH_SIZE;
+        renderEventList();
+      }
+      window.resetUserEvents = resetUserEvents;
+
+      function handleUserEventSearch(event) {
+        userEventSearch = String((event && event.target && event.target.value) || "").toLowerCase().trim();
+        userEventVisibleCount = USER_EVENT_BATCH_SIZE;
+        renderEventList();
       }
 
       function selectEvent(eventId) {
@@ -1324,14 +1381,51 @@
       function updateProfileChip_() {
         const chip = document.getElementById("profileChip");
         const emailEl = document.getElementById("profileEmail");
+        const logoutBtn = document.getElementById("logoutBtn");
 
         if (!currentProfile || !currentProfile.email) {
           chip.style.display = "none";
+          logoutBtn.style.display = "none";
           return;
         }
 
         emailEl.textContent = currentProfile.email;
         chip.style.display = "inline-flex";
+        logoutBtn.style.display = "inline-flex";
+      }
+
+      function logoutUser() {
+        sessionStorage.removeItem("simod_user_session");
+        sessionToken = "";
+        currentProfile = null;
+        allEvents = [];
+        allPackages = [];
+        selectedEventId = "";
+        editingPackageId = "";
+        userEventSearch = "";
+        userEventVisibleCount = USER_EVENT_BATCH_SIZE;
+        document.getElementById("authEmailInput").value = "";
+        document.getElementById("authNameInput").value = "";
+        document.getElementById("requestAccessBtn").style.display = "none";
+        document.getElementById("authCard").style.display = "grid";
+        document.getElementById("appShell").style.display = "none";
+        document.getElementById("eventList").innerHTML = "";
+        document.getElementById("tableWrap").innerHTML = "";
+        document.getElementById("eventSearchInput").value = "";
+        document.getElementById("searchInput").value = "";
+        document.getElementById("statusFilter").value = "ALL";
+        setModalOpen_("createHpsModal", false);
+        setModalOpen_("uploadFilesModal", false);
+        updateProfileChip_();
+        syncUiFromState({ totalEvents: 0, totalHps: 0, readyHps: 0, draftHps: 0 });
+        renderSelectedEventLabel();
+        renderHpsSelect();
+        setAuthState(
+          "Masukkan email untuk melanjutkan",
+          "Gunakan email yang akan dipakai untuk akses. Jika belum disetujui, kirim permintaan akses.",
+          false
+        );
+        setTopMessage("Anda sudah keluar dari sesi pengguna.", false);
       }
 
       function showTopError(err) {
@@ -1426,6 +1520,44 @@
 
       function formatHpsCount_(count) {
         return count + " HPS";
+      }
+
+      function buildVisibleItems_(items, visibleCount, initialCount) {
+        const totalItems = items.length;
+        const safeInitialCount = Math.max(Number(initialCount) || 0, 1);
+        const safeVisibleCount = Math.min(
+          Math.max(Number(visibleCount) || safeInitialCount, safeInitialCount),
+          totalItems
+        );
+        return {
+          visibleCount: safeVisibleCount,
+          initialCount: safeInitialCount,
+          totalItems,
+          hiddenCount: Math.max(totalItems - safeVisibleCount, 0),
+          canCollapse: totalItems > safeInitialCount && safeVisibleCount > safeInitialCount,
+          items: items.slice(0, safeVisibleCount)
+        };
+      }
+
+      function renderListControls_(moreHandlerName, lessHandlerName, visibleState, itemLabel) {
+        if (!visibleState || visibleState.totalItems <= visibleState.initialCount) return "";
+        return `
+          <div class="list-controls">
+            <div class="list-summary">Menampilkan ${visibleState.visibleCount} dari ${visibleState.totalItems} ${escapeHtml(itemLabel || "data")}</div>
+            <div class="list-actions">
+              ${
+                visibleState.hiddenCount > 0
+                  ? `<button class="tiny" type="button" onclick="${moreHandlerName}()">Lihat lebih banyak</button>`
+                  : ""
+              }
+              ${
+                visibleState.canCollapse
+                  ? `<button class="tiny" type="button" onclick="${lessHandlerName}()">Tampilkan ringkas</button>`
+                  : ""
+              }
+            </div>
+          </div>
+        `;
       }
 
       function getPackagesForSelection_() {

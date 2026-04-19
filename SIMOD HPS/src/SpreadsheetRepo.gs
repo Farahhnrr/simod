@@ -194,7 +194,9 @@ function listEducationEvents() {
       return evt.status !== 'ARCHIVED';
     })
     .sort(function (a, b) {
-      return a.eventName.localeCompare(b.eventName);
+      var timeA = new Date((a && a.updatedAt) || (a && a.createdAt) || 0).getTime();
+      var timeB = new Date((b && b.updatedAt) || (b && b.createdAt) || 0).getTime();
+      return timeB - timeA;
     });
 }
 

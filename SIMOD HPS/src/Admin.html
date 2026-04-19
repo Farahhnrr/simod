@@ -294,6 +294,25 @@
         background: rgba(248, 252, 249, 0.9);
       }
 
+      .list-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .list-summary {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .list-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
       label {
         display: block;
         margin-bottom: 6px;
@@ -710,6 +729,7 @@
         </div>
         <button class="btn primary" id="addEventBtn" type="button">Tambah Pendidikan</button>
         <div id="eventMessage" class="message"></div>
+        <input id="eventSearchInput" placeholder="Cari pendidikan..." style="margin-top:12px;" />
         <div class="event-list" id="eventsWrap"></div>
       </section>
 
@@ -791,9 +811,18 @@
       let allEvents = [];
       let allPackages = [];
       let notifications = [];
+      let accessRecords = [];
       let selectedEventId = "";
       let selectedAdminPackageId = "";
       let notificationPollHandle = null;
+      let eventListVisibleCount = 5;
+      let pendingAccessVisibleCount = 5;
+      let accessListVisibleCount = 5;
+      let notificationsVisibleCount = 5;
+      let eventSearch = "";
+      const EVENT_LIST_BATCH_SIZE = 5;
+      const ACCESS_LIST_BATCH_SIZE = 5;
+      const NOTIFICATION_BATCH_SIZE = 5;
       const adminUploadSlotDefs = [
         { key: "hpsLinkInaproc", label: "Dokumen HPS + LINK INAPROC", urlField: "hpsLinkInaprocFileUrl", inputId: "adminFileHpsLinkInaproc" },
         { key: "eFaktur", label: "Dokumen E-Faktur", urlField: "eFakturFileUrl", inputId: "adminFileEFaktur" },
@@ -802,6 +831,7 @@
       ];
 
       document.getElementById("refreshBtn").addEventListener("click", refreshAdminData);
+      document.getElementById("eventSearchInput").addEventListener("input", handleAdminEventSearch);
       document.getElementById("openNotificationsBtn").addEventListener("click", openNotificationsModal);
       document.getElementById("closeNotificationsBtn").addEventListener("click", closeNotificationsModal);
       document.getElementById("markNotificationsReadBtn").addEventListener("click", markAllNotificationsRead);
@@ -889,6 +919,7 @@
             renderAuth(data.auth || {});
             allEvents = data.events || [];
             notifications = data.notifications || [];
+            accessRecords = data.accessRecords || [];
             renderNotifications(notifications, data.unreadNotificationCount || 0);
             if (!selectedEventId && allEvents.length) {
               selectedEventId = allEvents[0].eventId;
@@ -901,8 +932,8 @@
               selectedAdminPackageId = "";
             }
             renderAdminManager(allPackages);
-            renderPendingAccess(data.accessRecords || []);
-            renderAccess(data.accessRecords || []);
+            renderPendingAccess(accessRecords);
+            renderAccess(accessRecords);
           })
           .withFailureHandler((err) => {
             const msg = err && err.message ? err.message : String(err || "Terjadi kesalahan yang tidak diketahui");
@@ -965,7 +996,20 @@
           return;
         }
 
-        wrap.innerHTML = events
+        const filteredEvents = events.filter((evt) => {
+          if (!eventSearch) return true;
+          return String((evt && evt.eventName) || "").toLowerCase().includes(eventSearch);
+        });
+
+        if (!filteredEvents.length) {
+          wrap.innerHTML = '<div class="empty">Tidak ada pendidikan yang cocok.</div>';
+          return;
+        }
+
+        const visibleState = buildVisibleItems_(filteredEvents, eventListVisibleCount, EVENT_LIST_BATCH_SIZE);
+        eventListVisibleCount = visibleState.visibleCount;
+
+        wrap.innerHTML = visibleState.items
           .map((evt) => `
             <div class="event-item">
               <div
@@ -993,7 +1037,25 @@
               </div>
             </div>
           `)
-          .join("");
+          .join("") + renderListControls_("showMoreAdminEvents", "resetAdminEvents", visibleState, "pendidikan");
+      }
+
+      function showMoreAdminEvents() {
+        eventListVisibleCount += EVENT_LIST_BATCH_SIZE;
+        renderEvents(allEvents);
+      }
+      window.showMoreAdminEvents = showMoreAdminEvents;
+
+      function resetAdminEvents() {
+        eventListVisibleCount = EVENT_LIST_BATCH_SIZE;
+        renderEvents(allEvents);
+      }
+      window.resetAdminEvents = resetAdminEvents;
+
+      function handleAdminEventSearch(event) {
+        eventSearch = String((event && event.target && event.target.value) || "").toLowerCase().trim();
+        eventListVisibleCount = EVENT_LIST_BATCH_SIZE;
+        renderEvents(allEvents);
       }
 
       function selectEvent(eventId) {
@@ -1032,7 +1094,7 @@
             input.value = "";
             if (res && res.event) {
               allEvents.push(res.event);
-              allEvents.sort((a, b) => a.eventName.localeCompare(b.eventName));
+              allEvents.sort((a, b) => getEventSortTime_(b) - getEventSortTime_(a));
               selectedEventId = res.event.eventId;
               renderEvents(allEvents);
             }
@@ -1389,7 +1451,13 @@
         } else {
           allEvents[idx] = nextEvent;
         }
-        allEvents.sort((a, b) => a.eventName.localeCompare(b.eventName));
+        allEvents.sort((a, b) => getEventSortTime_(b) - getEventSortTime_(a));
+      }
+
+      function getEventSortTime_(eventItem) {
+        const value = (eventItem && (eventItem.updatedAt || eventItem.createdAt)) || 0;
+        const parsed = new Date(value).getTime();
+        return Number.isNaN(parsed) ? 0 : parsed;
       }
 
       function getNextEducationStatus_(status) {
@@ -1478,6 +1546,9 @@
           return;
         }
 
+        const visibleState = buildVisibleItems_(pending, pendingAccessVisibleCount, ACCESS_LIST_BATCH_SIZE);
+        pendingAccessVisibleCount = visibleState.visibleCount;
+
         wrap.innerHTML = `
           <table>
             <thead>
@@ -1489,7 +1560,7 @@
               </tr>
             </thead>
             <tbody>
-              ${pending
+              ${visibleState.items
                 .map((record) => `
                   <tr>
                     <td>${escapeHtml(record.email || "-")}</td>
@@ -1506,8 +1577,20 @@
                 .join("")}
             </tbody>
           </table>
-        `;
+        ` + renderListControls_("showMorePendingAccess", "resetPendingAccess", visibleState, "permintaan");
       }
+
+      function showMorePendingAccess() {
+        pendingAccessVisibleCount += ACCESS_LIST_BATCH_SIZE;
+        renderPendingAccess(accessRecords);
+      }
+      window.showMorePendingAccess = showMorePendingAccess;
+
+      function resetPendingAccess() {
+        pendingAccessVisibleCount = ACCESS_LIST_BATCH_SIZE;
+        renderPendingAccess(accessRecords);
+      }
+      window.resetPendingAccess = resetPendingAccess;
 
       function renderAccess(records) {
         const wrap = document.getElementById("accessWrap");
@@ -1515,6 +1598,9 @@
           wrap.innerHTML = '<div class="empty">Belum ada data akses.</div>';
           return;
         }
+
+        const visibleState = buildVisibleItems_(records, accessListVisibleCount, ACCESS_LIST_BATCH_SIZE);
+        accessListVisibleCount = visibleState.visibleCount;
 
         wrap.innerHTML = `
           <table>
@@ -1528,7 +1614,7 @@
               </tr>
             </thead>
             <tbody>
-              ${records
+              ${visibleState.items
                 .map((record) => `
                   <tr>
                     <td>
@@ -1546,8 +1632,20 @@
                 .join("")}
             </tbody>
           </table>
-        `;
+        ` + renderListControls_("showMoreAccessRecords", "resetAccessRecords", visibleState, "akses");
       }
+
+      function showMoreAccessRecords() {
+        accessListVisibleCount += ACCESS_LIST_BATCH_SIZE;
+        renderAccess(accessRecords);
+      }
+      window.showMoreAccessRecords = showMoreAccessRecords;
+
+      function resetAccessRecords() {
+        accessListVisibleCount = ACCESS_LIST_BATCH_SIZE;
+        renderAccess(accessRecords);
+      }
+      window.resetAccessRecords = resetAccessRecords;
 
       function reviewAccess(email, decision) {
         if (!sessionToken) {
@@ -1620,7 +1718,10 @@
           return;
         }
 
-        wrap.innerHTML = notifications
+        const visibleState = buildVisibleItems_(notifications, notificationsVisibleCount, NOTIFICATION_BATCH_SIZE);
+        notificationsVisibleCount = visibleState.visibleCount;
+
+        wrap.innerHTML = visibleState.items
           .map((item) => `
             <div class="notification-item ${item.isRead ? "" : "unread"}">
               <div class="notification-head">
@@ -1634,8 +1735,20 @@
               </div>
             </div>
           `)
-          .join("");
+          .join("") + renderListControls_("showMoreNotifications", "resetNotificationsList", visibleState, "notifikasi");
       }
+
+      function showMoreNotifications() {
+        notificationsVisibleCount += NOTIFICATION_BATCH_SIZE;
+        renderNotifications(notifications);
+      }
+      window.showMoreNotifications = showMoreNotifications;
+
+      function resetNotificationsList() {
+        notificationsVisibleCount = NOTIFICATION_BATCH_SIZE;
+        renderNotifications(notifications);
+      }
+      window.resetNotificationsList = resetNotificationsList;
 
       function refreshNotifications() {
         if (!sessionToken) return;
@@ -1674,6 +1787,44 @@
         if (!notificationPollHandle) return;
         window.clearInterval(notificationPollHandle);
         notificationPollHandle = null;
+      }
+
+      function buildVisibleItems_(items, visibleCount, initialCount) {
+        const totalItems = items.length;
+        const safeInitialCount = Math.max(Number(initialCount) || 0, 1);
+        const safeVisibleCount = Math.min(
+          Math.max(Number(visibleCount) || safeInitialCount, safeInitialCount),
+          totalItems
+        );
+        return {
+          visibleCount: safeVisibleCount,
+          initialCount: safeInitialCount,
+          totalItems,
+          hiddenCount: Math.max(totalItems - safeVisibleCount, 0),
+          canCollapse: totalItems > safeInitialCount && safeVisibleCount > safeInitialCount,
+          items: items.slice(0, safeVisibleCount)
+        };
+      }
+
+      function renderListControls_(moreHandlerName, lessHandlerName, visibleState, itemLabel) {
+        if (!visibleState || visibleState.totalItems <= visibleState.initialCount) return "";
+        return `
+          <div class="list-controls">
+            <div class="list-summary">Menampilkan ${visibleState.visibleCount} dari ${visibleState.totalItems} ${escapeHtml(itemLabel || "data")}</div>
+            <div class="list-actions">
+              ${
+                visibleState.hiddenCount > 0
+                  ? `<button class="btn compact" type="button" onclick="${moreHandlerName}()">Lihat lebih banyak</button>`
+                  : ""
+              }
+              ${
+                visibleState.canCollapse
+                  ? `<button class="btn compact" type="button" onclick="${lessHandlerName}()">Tampilkan ringkas</button>`
+                  : ""
+              }
+            </div>
+          </div>
+        `;
       }
 
       function localizeStatus(status) {
