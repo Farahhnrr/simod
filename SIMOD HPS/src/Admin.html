@@ -164,6 +164,15 @@
         height: auto;
       }
 
+      .top-actions-box {
+        margin-top: 14px;
+        padding: 16px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 251, 249, 0.94));
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: 0 18px 36px rgba(42, 52, 40, 0.08);
+      }
+
       .brand-lockup {
         display: flex;
         align-items: flex-start;
@@ -286,6 +295,12 @@
       .grid {
         display: grid;
         gap: 16px;
+      }
+
+      @media (max-width: 1320px) {
+        .nav {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
       }
 
       @media (min-width: 1120px) {
@@ -963,6 +978,11 @@
           border-radius: 22px;
         }
 
+        .top-actions-box {
+          padding: 14px;
+          border-radius: 20px;
+        }
+
         .nav {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1071,6 +1091,11 @@
         }
 
         .hero-banner {
+          border-radius: 18px;
+        }
+
+        .top-actions-box {
+          padding: 12px;
           border-radius: 18px;
         }
 
@@ -1259,26 +1284,28 @@
         <div class="hero-banner">
           <img src="<?!= bannerDataUri ?>" alt="Banner SIMOD HPS" />
         </div>
-        <div class="nav">
-          <a class="btn" id="userUiBtn" href="<?= userUiUrl ?>" target="_top" rel="noopener noreferrer">
-            <svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg>
-            <span>Buka Halaman Pengguna</span>
-          </a>
-          <a class="btn" id="adminUiBtn" href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">
-            <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
-            <span>Muat Ulang Admin</span>
-          </a>
-          <button class="btn primary" id="refreshBtn" type="button">
-            <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
-            <span>Muat Ulang Data</span>
-          </button>
-          <button class="btn bell-btn" id="openNotificationsBtn" type="button" title="Notifikasi" aria-label="Notifikasi" style="display:none;">
-            <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
-            <span class="bell-badge" id="notificationBadge" style="display:none;">0</span>
-          </button>
-          <div class="profile-chip" id="profileChip" style="display:none;">
-            <svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg>
-            <span id="profileEmail">-</span>
+        <div class="top-actions-box">
+          <div class="nav">
+            <a class="btn" id="userUiBtn" href="<?= userUiUrl ?>" target="_top" rel="noopener noreferrer">
+              <svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg>
+              <span>Buka Halaman Pengguna</span>
+            </a>
+            <a class="btn" id="adminUiBtn" href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">
+              <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
+              <span>Muat Ulang Admin</span>
+            </a>
+            <button class="btn primary" id="refreshBtn" type="button">
+              <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
+              <span>Muat Ulang Data</span>
+            </button>
+            <button class="btn bell-btn" id="openNotificationsBtn" type="button" title="Notifikasi" aria-label="Notifikasi" style="display:none;">
+              <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
+              <span class="bell-badge" id="notificationBadge" style="display:none;">0</span>
+            </button>
+            <div class="profile-chip" id="profileChip" style="display:none;">
+              <svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg>
+              <span id="profileEmail">-</span>
+            </div>
           </div>
         </div>
         <div id="topMessage" class="message"></div>
