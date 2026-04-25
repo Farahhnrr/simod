@@ -38,6 +38,8 @@ function getBootstrapData(sessionToken) {
       readyHps: 0,
       draftHps: 0
     },
+    notifications: [],
+    unreadNotificationCount: 0,
     warning: '',
     events: [],
     packages: []
@@ -69,6 +71,13 @@ function getBootstrapData(sessionToken) {
 
   response.events = events;
   response.packages = packages;
+  response.notifications = listNotifications_(25, {
+    audience: 'USER',
+    recipientEmail: session.email
+  });
+  response.unreadNotificationCount = response.notifications.filter(function (item) {
+    return !item.isRead;
+  }).length;
   response.stats = getStats(events, packages);
   return response;
 }
@@ -114,10 +123,10 @@ function uploadHpsFiles(sessionToken, payload) {
 }
 
 function adminSaveRestrictedData(sessionToken, payload) {
-  requireAdminSession_(sessionToken);
+  var session = requireAdminSession_(sessionToken);
   payload = payload || {};
   payload.files = filterFilesByRole_(payload.files || {}, CONFIG.ADMIN_UPLOAD_KEYS, 'pengguna');
-  return updateAdminRestrictedRecord(payload);
+  return updateAdminRestrictedRecord(payload, session.email);
 }
 
 function deleteHpsDocument(sessionToken, packageId, fileKey) {
@@ -139,7 +148,19 @@ function deleteAccess(sessionToken, targetEmail) {
 
 function getAdminNotifications(sessionToken) {
   requireAdminSession_(sessionToken);
-  var notifications = listNotifications_(25);
+  var notifications = listNotifications_(25, { audience: 'ADMIN' });
+  return {
+    notifications: notifications,
+    unreadCount: notifications.filter(function (item) { return !item.isRead; }).length
+  };
+}
+
+function getUserNotifications(sessionToken) {
+  var session = requireApprovedSession_(sessionToken);
+  var notifications = listNotifications_(25, {
+    audience: 'USER',
+    recipientEmail: session.email
+  });
   return {
     notifications: notifications,
     unreadCount: notifications.filter(function (item) { return !item.isRead; }).length
@@ -148,7 +169,15 @@ function getAdminNotifications(sessionToken) {
 
 function markNotificationsRead(sessionToken, notificationIds) {
   requireAdminSession_(sessionToken);
-  return markNotificationsRead_(notificationIds);
+  return markNotificationsRead_(notificationIds, { audience: 'ADMIN' });
+}
+
+function markUserNotificationsRead(sessionToken, notificationIds) {
+  var session = requireApprovedSession_(sessionToken);
+  return markNotificationsRead_(notificationIds, {
+    audience: 'USER',
+    recipientEmail: session.email
+  });
 }
 
 function getStats(events, packages) {
@@ -211,7 +240,7 @@ function getAdminBootstrapData(sessionToken) {
 
   setupSheets();
   response.accessRecords = listAccessRecords_();
-  response.notifications = listNotifications_(25);
+  response.notifications = listNotifications_(25, { audience: 'ADMIN' });
   response.unreadNotificationCount = response.notifications.filter(function (item) {
     return !item.isRead;
   }).length;

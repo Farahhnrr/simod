@@ -3,25 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SIMOD HPS - Admin</title>
+    <title>SIMOD HPS - Sistem Monitoring Dokumen HPS</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg-1: #f7faf7;
-        --bg-2: #eef5f1;
-        --card: rgba(255, 255, 255, 0.9);
-        --card-strong: rgba(255, 255, 255, 0.98);
-        --text: #163127;
-        --muted: #61786d;
-        --line: rgba(53, 89, 73, 0.14);
-        --line-strong: rgba(53, 89, 73, 0.24);
-        --brand: #2f7d67;
-        --brand-strong: #225f4f;
-        --danger: #cb5a4b;
-        --shadow: 0 20px 48px rgba(27, 58, 47, 0.12);
+        --bg-1: #f4f1e9;
+        --bg-2: #ede8de;
+        --bg-3: #d9ddd2;
+        --card: rgba(255, 255, 255, 0.82);
+        --card-strong: rgba(255, 255, 255, 0.96);
+        --text: #171d17;
+        --muted: #778070;
+        --line: rgba(44, 58, 45, 0.1);
+        --line-strong: rgba(44, 58, 45, 0.18);
+        --brand: #5f725f;
+        --brand-strong: #314537;
+        --danger: #d64545;
+        --shadow: 0 24px 60px rgba(42, 52, 40, 0.08);
+        --shadow-strong: 0 32px 80px rgba(42, 52, 40, 0.12);
       }
 
       * {
@@ -29,51 +31,162 @@
       }
 
       body {
+        position: relative;
         margin: 0;
-        font-family: "Space Grotesk", sans-serif;
+        font-family: "Manrope", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(900px 560px at -10% -20%, rgba(81, 162, 132, 0.16) 0%, transparent 58%),
-          radial-gradient(700px 420px at 110% 0%, rgba(221, 241, 233, 0.9) 0%, transparent 52%),
+          radial-gradient(1200px 760px at 50% 10%, rgba(255, 255, 255, 0.74), transparent 62%),
+          radial-gradient(620px 420px at -8% 46%, rgba(95, 114, 95, 0.12), transparent 58%),
+          radial-gradient(560px 380px at 108% 30%, rgba(49, 69, 55, 0.11), transparent 54%),
+          linear-gradient(142deg, rgba(255, 255, 255, 0.22), transparent 34%),
+          repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0 18px, rgba(237, 232, 222, 0.12) 18px 36px),
           linear-gradient(180deg, var(--bg-1), var(--bg-2) 72%);
         min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      body::before {
+        background:
+          radial-gradient(circle at 22px 22px, rgba(91, 103, 91, 0.24) 0 2px, transparent 2.5px) 0 0 / 19px 19px no-repeat,
+          repeating-linear-gradient(135deg, rgba(49, 69, 55, 0.055) 0 2px, transparent 2px 34px) top right / 360px 220px no-repeat,
+          linear-gradient(135deg, transparent 0 74%, rgba(49, 69, 55, 0.08) 74% 74.8%, transparent 74.8%) bottom right / 980px 680px no-repeat,
+          linear-gradient(315deg, transparent 0 78%, rgba(49, 69, 55, 0.06) 78% 78.8%, transparent 78.8%) top left / 820px 560px no-repeat,
+          radial-gradient(circle at 10% 34%, rgba(76, 91, 76, 0.08), transparent 18%) no-repeat,
+          radial-gradient(circle at 88% 24%, rgba(76, 91, 76, 0.06), transparent 14%) no-repeat,
+          linear-gradient(135deg, rgba(49, 69, 55, 0.06), transparent 28%) no-repeat,
+          linear-gradient(315deg, rgba(49, 69, 55, 0.05), transparent 24%) no-repeat;
+        background-position:
+          18px 14px,
+          right top,
+          right bottom,
+          left top,
+          left center,
+          right top,
+          top left,
+          top right;
+        background-size:
+          260px 140px,
+          360px 220px,
+          980px 680px,
+          820px 560px,
+          360px 520px,
+          280px 320px,
+          100% 100%,
+          100% 100%;
+        opacity: 0.85;
+      }
+
+      body::after {
+        background:
+          linear-gradient(135deg, transparent 0 77%, rgba(34, 54, 38, 0.97) 77% 100%) bottom left / 460px 340px no-repeat,
+          linear-gradient(315deg, transparent 0 74%, rgba(91, 103, 91, 0.98) 74% 100%) bottom right / 500px 390px no-repeat,
+          radial-gradient(circle at 96% 96%, rgba(53, 69, 56, 0.42), transparent 16%) bottom right / 500px 390px no-repeat,
+          repeating-linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0 12px, transparent 12px 26px) bottom right / 420px 280px no-repeat,
+          repeating-linear-gradient(35deg, rgba(255, 255, 255, 0.06) 0 14px, transparent 14px 30px) bottom left / 360px 240px no-repeat,
+          linear-gradient(135deg, transparent 0 68%, rgba(255, 255, 255, 0.14) 68% 68.6%, transparent 68.6%) center / 100% 100% no-repeat,
+          linear-gradient(135deg, transparent 0 83%, rgba(49, 69, 55, 0.12) 83% 84%, transparent 84%) bottom right / 760px 520px no-repeat,
+          linear-gradient(315deg, transparent 0 84%, rgba(49, 69, 55, 0.1) 84% 85%, transparent 85%) top right / 620px 360px no-repeat,
+          linear-gradient(135deg, transparent 0 80%, rgba(49, 69, 55, 0.08) 80% 81%, transparent 81%) bottom left / 560px 400px no-repeat;
+        opacity: 1;
       }
 
       .container {
         width: min(1250px, 92vw);
-        margin: 32px auto;
+        margin: 28px auto 40px;
         display: grid;
-        gap: 16px;
+        gap: 18px;
+        position: relative;
+        z-index: 1;
       }
 
       .header,
       .card {
         background: var(--card);
         border: 1px solid var(--line);
-        border-radius: 20px;
+        border-radius: 24px;
         box-shadow: var(--shadow);
-        backdrop-filter: blur(16px);
+        backdrop-filter: blur(18px);
       }
 
       .header,
       .card {
-        padding: 18px;
+        padding: 22px;
       }
 
       .header {
         background:
-          linear-gradient(135deg, rgba(61, 141, 116, 0.14), transparent 42%),
-          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 250, 246, 0.96));
+          linear-gradient(140deg, rgba(95, 114, 95, 0.12), rgba(95, 114, 95, 0.03) 42%, transparent 70%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 246, 241, 0.94));
+        box-shadow: var(--shadow-strong);
       }
 
       .card {
-        background: linear-gradient(180deg, var(--card-strong), var(--card));
+        background: linear-gradient(180deg, var(--card-strong), rgba(246, 243, 236, 0.88));
       }
 
       .title {
         margin: 0;
-        font-size: clamp(22px, 3.5vw, 34px);
-        letter-spacing: -0.03em;
+        display: grid;
+        gap: 6px;
+      }
+
+      .brand-lockup {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .brand-mark {
+        width: 58px;
+        height: 58px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(95, 114, 95, 1), rgba(49, 69, 55, 1));
+        color: #f8f7f2;
+        box-shadow: 0 18px 34px rgba(49, 69, 55, 0.2);
+      }
+
+      .icon {
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        flex: 0 0 auto;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .brand-mark .icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .title-brand {
+        font-size: clamp(24px, 3.6vw, 38px);
+        font-weight: 800;
+        letter-spacing: -0.045em;
+      }
+
+      .title-subtext {
+        font-size: clamp(13px, 1.5vw, 17px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--muted);
+        max-width: 640px;
       }
 
       .subtitle,
@@ -90,29 +203,36 @@
 
       .nav a,
       .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         border: 1px solid var(--line);
         border-radius: 999px;
-        padding: 10px 14px;
+        padding: 10px 15px;
         text-decoration: none;
-        background: rgba(255, 255, 255, 0.72);
+        background: rgba(255, 255, 255, 0.74);
         color: var(--text);
         font: inherit;
         cursor: pointer;
-        transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+        font-size: 13px;
+        font-weight: 700;
+        transition: background 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
       }
 
       .nav a:hover,
       .btn:hover {
-        background: rgba(47, 125, 103, 0.08);
+        background: rgba(95, 114, 95, 0.08);
         border-color: var(--line-strong);
         transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(42, 52, 40, 0.08);
       }
 
       .btn.primary {
-        background: linear-gradient(180deg, #348a71, #286c59);
+        background: linear-gradient(180deg, #5f725f, #314537);
         color: #f8fdfa;
         border-color: transparent;
-        box-shadow: 0 14px 30px rgba(44, 103, 84, 0.2);
+        box-shadow: 0 16px 32px rgba(49, 69, 55, 0.22);
       }
 
       .grid {
@@ -139,36 +259,67 @@
       }
 
       .stat {
-        background: linear-gradient(180deg, rgba(236, 248, 241, 0.96), rgba(255, 255, 255, 0.98));
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 244, 238, 0.96));
         border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 16px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+      }
+
+      .stat-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 16px;
-        padding: 14px;
+        background: linear-gradient(180deg, rgba(95, 114, 95, 1), rgba(49, 69, 55, 1));
+        color: #f8f7f2;
+        box-shadow: 0 14px 28px rgba(49, 69, 55, 0.16);
+      }
+
+      .stat-icon .icon {
+        width: 22px;
+        height: 22px;
+      }
+
+      .stat-body {
+        min-width: 0;
       }
 
       .label {
-        font-size: 12px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
         color: var(--muted);
       }
 
       .value {
-        margin-top: 8px;
-        font-size: 26px;
-        font-weight: 700;
+        margin-top: 6px;
+        font-size: 30px;
+        font-weight: 800;
         color: var(--brand-strong);
       }
 
       .status {
         display: inline-block;
         border-radius: 999px;
-        padding: 4px 8px;
-        font-size: 12px;
-        font-weight: 700;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
       }
 
       .status.ready {
-        background: rgba(47, 125, 103, 0.12);
+        background: rgba(95, 114, 95, 0.14);
         color: var(--brand-strong);
-        border: 1px solid rgba(47, 125, 103, 0.18);
+        border: 1px solid rgba(95, 114, 95, 0.22);
       }
 
       .status.error {
@@ -178,15 +329,15 @@
       }
 
       .status.proses {
-        background: rgba(220, 145, 45, 0.12);
+        background: rgba(164, 130, 55, 0.14);
         color: #996212;
-        border: 1px solid rgba(220, 145, 45, 0.18);
+        border: 1px solid rgba(164, 130, 55, 0.22);
       }
 
       .status.done {
-        background: rgba(47, 125, 103, 0.12);
+        background: rgba(95, 114, 95, 0.14);
         color: var(--brand-strong);
-        border: 1px solid rgba(47, 125, 103, 0.18);
+        border: 1px solid rgba(95, 114, 95, 0.22);
       }
 
       .stack {
@@ -201,9 +352,9 @@
 
       .row {
         border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 12px;
-        background: linear-gradient(180deg, rgba(239, 248, 243, 0.96), rgba(255, 255, 255, 0.98));
+        border-radius: 20px;
+        padding: 14px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 239, 231, 0.94));
       }
 
       .row strong {
@@ -243,10 +394,13 @@
 
       table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
         font-size: 14px;
         overflow: hidden;
-        border-radius: 16px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.88);
       }
 
       .hps-table th:nth-child(1),
@@ -263,18 +417,18 @@
 
       th,
       td {
-        padding: 10px;
+        padding: 14px 12px;
         border-bottom: 1px solid var(--line);
         text-align: left;
         vertical-align: top;
       }
 
       th {
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
         text-transform: uppercase;
-        letter-spacing: 0.08em;
-        background: rgba(244, 250, 246, 0.82);
+        letter-spacing: 0.12em;
+        background: rgba(246, 249, 253, 0.96);
       }
 
       tbody tr {
@@ -282,16 +436,16 @@
       }
 
       tbody tr:hover {
-        background: rgba(47, 125, 103, 0.04);
+        background: rgba(95, 114, 95, 0.05);
       }
 
       .empty {
-        padding: 20px;
+        padding: 24px;
         text-align: center;
         color: var(--muted);
         border: 1px dashed var(--line);
-        border-radius: 16px;
-        background: rgba(248, 252, 249, 0.9);
+        border-radius: 20px;
+        background: rgba(251, 253, 255, 0.84);
       }
 
       .list-controls {
@@ -325,9 +479,9 @@
       select {
         width: 100%;
         border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px 12px;
-        background: rgba(248, 252, 249, 0.95);
+        border-radius: 16px;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.9);
         color: var(--text);
         font: inherit;
         transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
@@ -340,8 +494,8 @@
       input:focus,
       select:focus {
         outline: none;
-        border-color: rgba(47, 125, 103, 0.58);
-        box-shadow: 0 0 0 3px rgba(47, 125, 103, 0.14);
+        border-color: rgba(95, 114, 95, 0.42);
+        box-shadow: 0 0 0 4px rgba(95, 114, 95, 0.12);
       }
 
       .auth-card {
@@ -363,8 +517,9 @@
         padding: 10px 14px;
         border-radius: 999px;
         border: 1px solid var(--line);
-        background: rgba(244, 250, 246, 0.94);
+        background: rgba(255, 255, 255, 0.84);
         font-size: 13px;
+        font-weight: 700;
       }
 
       .bell-btn {
@@ -372,11 +527,10 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 0;
         width: 44px;
         height: 44px;
         padding: 0;
-        font-size: 18px;
-        line-height: 1;
       }
 
       .bell-badge {
@@ -421,14 +575,14 @@
 
       .notification-item {
         border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 12px;
-        background: linear-gradient(180deg, rgba(239, 248, 243, 0.96), rgba(255, 255, 255, 0.98));
+        border-radius: 20px;
+        padding: 15px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 239, 231, 0.94));
       }
 
       .notification-item.unread {
-        border-color: rgba(47, 125, 103, 0.32);
-        box-shadow: inset 0 0 0 1px rgba(47, 125, 103, 0.1);
+        border-color: rgba(95, 114, 95, 0.26);
+        box-shadow: inset 0 0 0 1px rgba(95, 114, 95, 0.08);
       }
 
       .notification-head {
@@ -456,17 +610,18 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 10px;
+        padding: 7px 11px;
         border-radius: 999px;
         border: 1px solid var(--line);
-        background: rgba(244, 250, 246, 0.94);
+        background: rgba(255, 255, 255, 0.92);
         color: var(--text);
         text-decoration: none;
         font-size: 12px;
+        font-weight: 700;
       }
 
       .tiny-link:hover {
-        background: rgba(47, 125, 103, 0.08);
+        background: rgba(95, 114, 95, 0.08);
         border-color: var(--line-strong);
       }
 
@@ -485,9 +640,9 @@
 
       .doc-upload-slot {
         border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 12px;
-        background: linear-gradient(180deg, rgba(239, 248, 243, 0.96), rgba(255, 255, 255, 0.98));
+        border-radius: 20px;
+        padding: 14px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 239, 231, 0.94));
       }
 
       .doc-upload-head {
@@ -518,13 +673,13 @@
         min-width: 138px;
         justify-content: center;
         padding: 9px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(47, 125, 103, 0.18);
-        background: linear-gradient(180deg, rgba(225, 244, 236, 0.96), rgba(244, 250, 246, 0.98));
+        border-radius: 14px;
+        border: 1px solid rgba(95, 114, 95, 0.18);
+        background: linear-gradient(180deg, rgba(235, 239, 228, 1), rgba(248, 246, 240, 0.98));
         color: var(--brand-strong);
         font-size: 12px;
         font-weight: 700;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.02em;
         text-decoration: none;
       }
 
@@ -540,9 +695,9 @@
         align-items: center;
         justify-content: center;
         padding: 20px;
-        background: rgba(30, 50, 41, 0.16);
+        background: rgba(15, 23, 42, 0.2);
         z-index: 20;
-        backdrop-filter: blur(6px);
+        backdrop-filter: blur(10px);
       }
 
       .modal-shell.open {
@@ -553,11 +708,11 @@
         width: min(560px, 100%);
         max-height: min(90vh, 760px);
         overflow: auto;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(244, 250, 246, 0.98));
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(246, 243, 236, 0.98));
         border: 1px solid var(--line);
-        border-radius: 24px;
-        box-shadow: 0 28px 70px rgba(27, 58, 47, 0.18);
-        padding: 20px;
+        border-radius: 28px;
+        box-shadow: 0 34px 90px rgba(42, 52, 40, 0.16);
+        padding: 22px;
       }
 
       .modal-header {
@@ -613,30 +768,65 @@
       .event-btn {
         text-align: left;
         border: 1px solid var(--line);
-        background: rgba(244, 250, 246, 0.94);
-        border-radius: 14px;
-        padding: 12px 14px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 247, 252, 0.92));
+        border-radius: 18px;
+        padding: 14px 16px;
         color: var(--text);
         cursor: pointer;
-        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .event-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .event-main-icon {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(237, 240, 231, 0.96), rgba(248, 246, 241, 0.98));
+        color: var(--brand-strong);
+        border: 1px solid rgba(95, 114, 95, 0.16);
+      }
+
+      .event-main-icon .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .event-title-copy {
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .event-arrow {
+        color: var(--muted);
       }
 
       .event-btn:hover {
         border-color: var(--line-strong);
-        background: rgba(47, 125, 103, 0.06);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(236, 248, 247, 0.96));
         transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(42, 52, 40, 0.1);
       }
 
       .event-btn.active {
-        border-color: rgba(47, 125, 103, 0.34);
-        background: linear-gradient(180deg, rgba(47, 125, 103, 0.14), rgba(47, 125, 103, 0.05));
-        box-shadow: inset 0 0 0 1px rgba(47, 125, 103, 0.12);
+        border-color: rgba(95, 114, 95, 0.3);
+        background: linear-gradient(180deg, rgba(231, 248, 246, 0.96), rgba(255, 255, 255, 0.98));
+        box-shadow:
+          inset 0 0 0 1px rgba(95, 114, 95, 0.08),
+          0 16px 34px rgba(95, 114, 95, 0.08);
       }
 
       .event-btn:focus-visible {
         outline: none;
-        border-color: rgba(47, 125, 103, 0.58);
-        box-shadow: 0 0 0 3px rgba(47, 125, 103, 0.14);
+        border-color: rgba(95, 114, 95, 0.58);
+        box-shadow: 0 0 0 3px rgba(95, 114, 95, 0.14);
       }
 
       .event-meta {
@@ -655,28 +845,179 @@
       .btn.compact {
         padding: 8px 12px;
         font-size: 13px;
+        box-shadow: none;
       }
 
       .auth-actions .field {
         margin: 0;
         min-width: min(320px, 100%);
       }
+
+      .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+      }
+
+      .section-icon {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(237, 240, 231, 0.96), rgba(248, 246, 241, 0.98));
+        color: var(--brand-strong);
+        border: 1px solid rgba(95, 114, 95, 0.14);
+      }
+
+      .section-icon .icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .search-field {
+        position: relative;
+      }
+
+      .search-field input {
+        padding-left: 44px;
+      }
+
+      .search-field .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        pointer-events: none;
+      }
     </style>
   </head>
   <body>
+    <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"></path>
+        <path d="M9.5 12.5 11.3 14.3 14.9 10.1"></path>
+      </symbol>
+      <symbol id="i-school" viewBox="0 0 24 24">
+        <path d="M3 10 12 5l9 5"></path>
+        <path d="M5 10v8h14v-8"></path>
+        <path d="M9 18v-4h6v4"></path>
+        <path d="M12 5V3"></path>
+      </symbol>
+      <symbol id="i-book" viewBox="0 0 24 24">
+        <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v15.5a.5.5 0 0 1-.5.5H7a3 3 0 0 0-3 3z"></path>
+        <path d="M7 4v19"></path>
+        <path d="M10 8h6"></path>
+        <path d="M10 12h6"></path>
+      </symbol>
+      <symbol id="i-graduation" viewBox="0 0 24 24">
+        <path d="m2 9.5 10-5 10 5-10 5z"></path>
+        <path d="M6 11.5v4.5c0 1.6 2.7 3 6 3s6-1.4 6-3v-4.5"></path>
+        <path d="M22 9.5v6"></path>
+      </symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24">
+        <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v7A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+      </symbol>
+      <symbol id="i-file" viewBox="0 0 24 24">
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+        <path d="M14 3v5h5"></path>
+        <path d="M9 13h6"></path>
+        <path d="M9 17h6"></path>
+      </symbol>
+      <symbol id="i-check-circle" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="m8.5 12 2.3 2.3 4.7-4.8"></path>
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="6"></circle>
+        <path d="m20 20-3.5-3.5"></path>
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24">
+        <path d="M12 16V6"></path>
+        <path d="m7.5 10.5 4.5-4.5 4.5 4.5"></path>
+        <path d="M5 19h14"></path>
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M4 7h16"></path>
+        <path d="M10 11v6"></path>
+        <path d="M14 11v6"></path>
+        <path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"></path>
+        <path d="M9 7V4h6v3"></path>
+      </symbol>
+      <symbol id="i-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9.5" cy="7.5" r="3.5"></circle>
+        <path d="M21 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 4.6a3.5 3.5 0 0 1 0 5.8"></path>
+      </symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+        <path d="m4 7 8 6 8-6"></path>
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M15 18H5.5a1.5 1.5 0 0 1-1.2-2.4L6 13V9a6 6 0 1 1 12 0v4l1.7 2.6a1.5 1.5 0 0 1-1.2 2.4H15"></path>
+        <path d="M10 18a2 2 0 0 0 4 0"></path>
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+        <path d="M21 3v6h-6"></path>
+      </symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24">
+        <path d="m9 6 6 6-6 6"></path>
+      </symbol>
+      <symbol id="i-key" viewBox="0 0 24 24">
+        <circle cx="8" cy="15" r="4"></circle>
+        <path d="M12 15h9"></path>
+        <path d="M18 12v6"></path>
+        <path d="M15 12v3"></path>
+      </symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24">
+        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </symbol>
+    </svg>
     <div class="container">
       <section class="header">
-        <h1 class="title">SIMOD HPS - Admin</h1>
+        <div class="brand-lockup">
+          <div class="brand-mark">
+            <svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+          </div>
+          <div class="title">
+            <div class="title-brand">SIMOD HPS</div>
+            <div class="title-subtext">Sistem Monitoring Dokumen Harga Perkiraan Sendiri</div>
+          </div>
+        </div>
         <p class="subtitle">Monitor konfigurasi Apps Script, akses data, dan ringkasan isi spreadsheet dari satu deployment.</p>
         <div class="nav">
-          <a class="btn" id="userUiBtn" href="<?= userUiUrl ?>" target="_top" rel="noopener noreferrer">Buka Halaman Pengguna</a>
-          <a class="btn" id="adminUiBtn" href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">Muat Ulang Admin</a>
-          <button class="btn primary" id="refreshBtn" type="button">Muat Ulang Data</button>
+          <a class="btn" id="userUiBtn" href="<?= userUiUrl ?>" target="_top" rel="noopener noreferrer">
+            <svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg>
+            <span>Buka Halaman Pengguna</span>
+          </a>
+          <a class="btn" id="adminUiBtn" href="<?= adminUiUrl ?>" target="_top" rel="noopener noreferrer">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
+            <span>Muat Ulang Admin</span>
+          </a>
+          <button class="btn primary" id="refreshBtn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
+            <span>Muat Ulang Data</span>
+          </button>
           <button class="btn bell-btn" id="openNotificationsBtn" type="button" title="Notifikasi" aria-label="Notifikasi" style="display:none;">
-            <span aria-hidden="true">🔔</span>
+            <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
             <span class="bell-badge" id="notificationBadge" style="display:none;">0</span>
           </button>
           <div class="profile-chip" id="profileChip" style="display:none;">
+            <svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg>
             <span id="profileEmail">-</span>
           </div>
         </div>
@@ -695,7 +1036,10 @@
             <label for="adminCodeInput">Kode Admin</label>
             <input id="adminCodeInput" type="password" placeholder="Masukkan kode admin" />
           </div>
-          <button class="btn primary" id="startAdminSessionBtn" type="button">Buka Admin</button>
+          <button class="btn primary" id="startAdminSessionBtn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg>
+            <span>Buka Admin</span>
+          </button>
         </div>
       </section>
 
@@ -703,55 +1047,96 @@
       <section class="card">
         <div class="stats">
           <div class="stat">
-            <div class="label">Total Pendidikan</div>
-            <div class="value" id="statEvents">0</div>
+            <div class="stat-head">
+              <span class="stat-icon"><svg class="icon" aria-hidden="true"><use href="#i-graduation"></use></svg></span>
+              <div class="stat-body">
+                <div class="label">Total Pendidikan</div>
+                <div class="value" id="statEvents">0</div>
+              </div>
+            </div>
           </div>
           <div class="stat">
-            <div class="label">Total HPS</div>
-            <div class="value" id="statHps">0</div>
+            <div class="stat-head">
+              <span class="stat-icon"><svg class="icon" aria-hidden="true"><use href="#i-folder"></use></svg></span>
+              <div class="stat-body">
+                <div class="label">Total HPS</div>
+                <div class="value" id="statHps">0</div>
+              </div>
+            </div>
           </div>
           <div class="stat">
-            <div class="label">Siap</div>
-            <div class="value" id="statReady">0</div>
+            <div class="stat-head">
+              <span class="stat-icon"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"></use></svg></span>
+              <div class="stat-body">
+                <div class="label">Siap</div>
+                <div class="value" id="statReady">0</div>
+              </div>
+            </div>
           </div>
           <div class="stat">
-            <div class="label">Draf</div>
-            <div class="value" id="statDraft">0</div>
+            <div class="stat-head">
+              <span class="stat-icon"><svg class="icon" aria-hidden="true"><use href="#i-file"></use></svg></span>
+              <div class="stat-body">
+                <div class="label">Draf</div>
+                <div class="value" id="statDraft">0</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="card">
-        <h2>Daftar Pendidikan</h2>
+        <div class="section-heading">
+          <span class="section-icon"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg></span>
+          <h2>Daftar Pendidikan</h2>
+        </div>
         <div class="field">
           <label for="eventNameInput">Nama Pendidikan</label>
           <input id="eventNameInput" placeholder="Contoh: Pendidikan Militer" />
         </div>
-        <button class="btn primary" id="addEventBtn" type="button">Tambah Pendidikan</button>
+        <button class="btn primary" id="addEventBtn" type="button">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+          <span>Tambah Pendidikan</span>
+        </button>
         <div id="eventMessage" class="message"></div>
-        <input id="eventSearchInput" placeholder="Cari pendidikan..." style="margin-top:12px;" />
+        <div class="search-field" style="margin-top:12px;">
+          <svg class="icon search-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+          <input id="eventSearchInput" placeholder="Cari pendidikan..." />
+        </div>
         <div class="event-list" id="eventsWrap"></div>
       </section>
 
       <section class="card">
-        <h2>Input Admin untuk HPS</h2>
+        <div class="section-heading">
+          <span class="section-icon"><svg class="icon" aria-hidden="true"><use href="#i-folder"></use></svg></span>
+          <h2>Input Admin untuk HPS</h2>
+        </div>
         <div id="adminManageTableWrap" style="margin-top:14px;"></div>
       </section>
 
       <section class="grid">
         <div class="card">
-          <h2>Permintaan Akses</h2>
+          <div class="section-heading">
+            <span class="section-icon"><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg></span>
+            <h2>Permintaan Akses</h2>
+          </div>
           <div id="pendingAccessWrap"></div>
         </div>
 
         <div class="card">
-          <h2>Daftar Akses</h2>
+          <div class="section-heading">
+            <span class="section-icon"><svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg></span>
+            <h2>Daftar Akses</h2>
+          </div>
           <div id="accessWrap"></div>
         </div>
       </section>
 
       <section class="card">
-        <h2>Status Sistem</h2>
+        <div class="section-heading">
+          <span class="section-icon"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"></use></svg></span>
+          <h2>Status Sistem</h2>
+        </div>
         <div class="hint" style="margin-bottom:12px;">Ringkasan singkat konfigurasi utama dan status otorisasi Apps Script.</div>
         <div class="status-grid" id="statusSystemWrap">
           <div class="stack key-value" id="configWrap"></div>
@@ -768,7 +1153,10 @@
             <h2 class="modal-title" id="adminHpsModalTitle">Input Admin untuk HPS</h2>
             <p class="modal-note">Kelola No. Surat Pesanan dan dokumen khusus admin untuk HPS yang dipilih. Dokumen yang sudah ada ditandai sudah diunggah. Hapus dokumen tersebut jika ingin mengunggah file baru.</p>
           </div>
-          <button class="btn modal-close" id="closeAdminHpsBtn" type="button">Tutup</button>
+          <button class="btn modal-close" id="closeAdminHpsBtn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+            <span>Tutup</span>
+          </button>
         </div>
         <div class="row">
           <strong>HPS terpilih</strong>
@@ -783,7 +1171,10 @@
         <div class="doc-links" id="adminDocLinks"></div>
         <div id="adminHpsMessage" class="message"></div>
         <div class="modal-actions">
-          <button class="btn" id="saveAdminHpsBtn" type="button">Simpan Input Admin</button>
+          <button class="btn" id="saveAdminHpsBtn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg>
+            <span>Simpan Input Admin</span>
+          </button>
         </div>
       </div>
     </div>
@@ -795,12 +1186,18 @@
             <h2 class="modal-title" id="notificationsModalTitle">Notifikasi</h2>
             <p class="modal-note">Notifikasi ini muncul saat pengguna mengunggah Dokumen HPS.</p>
           </div>
-          <button class="btn modal-close" id="closeNotificationsBtn" type="button">Tutup</button>
+          <button class="btn modal-close" id="closeNotificationsBtn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+            <span>Tutup</span>
+          </button>
         </div>
         <div id="notificationsSummary" class="hint" style="margin-bottom:12px;">Belum ada notifikasi.</div>
         <div class="notification-list" id="notificationsWrap"></div>
         <div class="modal-actions">
-          <button class="btn" id="markNotificationsReadBtn" type="button">Tandai Semua Dibaca</button>
+          <button class="btn" id="markNotificationsReadBtn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-check-circle"></use></svg>
+            <span>Tandai Semua Dibaca</span>
+          </button>
         </div>
       </div>
     </div>
@@ -816,13 +1213,19 @@
       let selectedAdminPackageId = "";
       let notificationPollHandle = null;
       let eventListVisibleCount = 5;
+      let adminHpsVisibleCount = 10;
       let pendingAccessVisibleCount = 5;
       let accessListVisibleCount = 5;
       let notificationsVisibleCount = 5;
       let eventSearch = "";
       const EVENT_LIST_BATCH_SIZE = 5;
+      const ADMIN_HPS_BATCH_SIZE = 10;
       const ACCESS_LIST_BATCH_SIZE = 5;
       const NOTIFICATION_BATCH_SIZE = 5;
+      function icon(name, className) {
+        return '<svg class="icon ' + (className || "") + '" aria-hidden="true"><use href="#i-' + name + '"></use></svg>';
+      }
+
       const adminUploadSlotDefs = [
         { key: "hpsLinkInaproc", label: "Dokumen HPS + LINK INAPROC", urlField: "hpsLinkInaprocFileUrl", inputId: "adminFileHpsLinkInaproc" },
         { key: "eFaktur", label: "Dokumen E-Faktur", urlField: "eFakturFileUrl", inputId: "adminFileEFaktur" },
@@ -1019,7 +1422,11 @@
                 onclick="selectEvent('${escapeAttr(evt.eventId)}')"
                 onkeydown="handleEventCardKeydown(event, '${escapeAttr(evt.eventId)}')"
               >
-                <strong>${escapeHtml(evt.eventName)}</strong>
+                <div class="event-title-row">
+                  <span class="event-main-icon">${icon("book")}</span>
+                  <span class="event-title-copy"><strong>${escapeHtml(evt.eventName)}</strong></span>
+                  <span class="event-arrow">${icon("chevron-right")}</span>
+                </div>
                 <div class="hint mono" style="margin-top:6px;">${escapeHtml(evt.eventId)}</div>
                 <div class="event-meta">
                   <span class="status ${escapeAttr(getEducationStatusClass_(evt.status))}">${escapeHtml(localizeStatus(evt.status || "-"))}</span>
@@ -1028,12 +1435,8 @@
                 </div>
               </div>
               <div class="event-actions">
-                <button class="btn compact" type="button" onclick="toggleEducationStatus('${escapeAttr(evt.eventId)}', '${escapeAttr(getNextEducationStatus_(evt.status))}')">
-                  ${escapeHtml(getEducationStatusActionLabel_(evt.status))}
-                </button>
-                <button class="btn compact" type="button" onclick="deleteEducation('${escapeAttr(evt.eventId)}', '${escapeAttr(evt.eventName)}')">
-                  Hapus
-                </button>
+                <button class="btn compact" type="button" onclick="toggleEducationStatus('${escapeAttr(evt.eventId)}', '${escapeAttr(getNextEducationStatus_(evt.status))}')">${icon("check-circle")}<span>${escapeHtml(getEducationStatusActionLabel_(evt.status))}</span></button>
+                <button class="btn compact" type="button" onclick="deleteEducation('${escapeAttr(evt.eventId)}', '${escapeAttr(evt.eventName)}')">${icon("trash")}<span>Hapus</span></button>
               </div>
             </div>
           `)
@@ -1060,6 +1463,7 @@
 
       function selectEvent(eventId) {
         selectedEventId = eventId;
+        adminHpsVisibleCount = ADMIN_HPS_BATCH_SIZE;
         if (!allPackages.some((pkg) => pkg.packageId === selectedAdminPackageId && pkg.eventId === selectedEventId)) {
           selectedAdminPackageId = "";
         }
@@ -1174,6 +1578,9 @@
           selectedAdminPackageId = "";
         }
 
+        const visibleState = buildVisibleItems_(filtered, adminHpsVisibleCount, ADMIN_HPS_BATCH_SIZE);
+        adminHpsVisibleCount = visibleState.visibleCount;
+
         wrap.innerHTML = `
           <table class="hps-table">
             <thead>
@@ -1188,7 +1595,7 @@
               </tr>
             </thead>
             <tbody>
-              ${filtered
+              ${visibleState.items
                 .map((pkg) => {
                   const statusClass = pkg.status === "READY" ? "ready" : "error";
                   return `
@@ -1213,7 +1620,7 @@
                       <td>
                         <div class="row-actions">
                           <button class="btn" type="button" onclick="openAdminHpsModalForPackage('${escapeAttr(pkg.packageId)}')">
-                            Input Admin
+                            ${icon("upload")}<span>Input Admin</span>
                           </button>
                         </div>
                       </td>
@@ -1223,9 +1630,21 @@
                 .join("")}
             </tbody>
           </table>
-        `;
+        ` + renderListControls_("showMoreAdminHps", "resetAdminHps", visibleState, "HPS");
 
       }
+
+      function showMoreAdminHps() {
+        adminHpsVisibleCount += ADMIN_HPS_BATCH_SIZE;
+        renderAdminManager(allPackages);
+      }
+      window.showMoreAdminHps = showMoreAdminHps;
+
+      function resetAdminHps() {
+        adminHpsVisibleCount = ADMIN_HPS_BATCH_SIZE;
+        renderAdminManager(allPackages);
+      }
+      window.resetAdminHps = resetAdminHps;
 
       function openAdminHpsModalForPackage(packageId) {
         selectedAdminPackageId = packageId;
@@ -1482,15 +1901,15 @@
 
       function renderDocLink(url, label) {
         if (!url) return `<span class="hint">${escapeHtml(label)}: belum ada</span>`;
-        return `<a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${escapeHtml(label)}</a>`;
+        return `<a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${icon("file")}<span>${escapeHtml(label)}</span></a>`;
       }
 
       function renderAdminManagedDoc_(packageId, fileKey, url, label) {
         if (!url) return `<span class="hint">${escapeHtml(label)}: belum ada</span>`;
         return `
           <span class="doc-item">
-            <a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${escapeHtml(label)}</a>
-            <button class="btn compact" type="button" onclick="deleteAdminDocument('${escapeAttr(packageId)}', '${escapeAttr(fileKey)}', '${escapeAttr(label)}')">Hapus</button>
+            <a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${icon("file")}<span>${escapeHtml(label)}</span></a>
+            <button class="btn compact" type="button" onclick="deleteAdminDocument('${escapeAttr(packageId)}', '${escapeAttr(fileKey)}', '${escapeAttr(label)}')">${icon("trash")}<span>Hapus</span></button>
           </span>
         `;
       }
@@ -1508,8 +1927,8 @@
                     <span class="status ready">Sudah Diunggah</span>
                   </div>
                   <div class="doc-upload-state">
-                    <a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">Lihat Dokumen</a>
-                    <button class="btn compact" type="button" onclick="deleteAdminDocument('${escapeAttr(target.packageId)}', '${escapeAttr(slot.key)}', '${escapeAttr(slot.label)}')">Hapus</button>
+                    <a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${icon("eye")}<span>Lihat Dokumen</span></a>
+                    <button class="btn compact" type="button" onclick="deleteAdminDocument('${escapeAttr(target.packageId)}', '${escapeAttr(slot.key)}', '${escapeAttr(slot.label)}')">${icon("trash")}<span>Hapus</span></button>
                   </div>
                 </div>
               `;
@@ -1530,12 +1949,12 @@
 
       function renderAdminFileLink(url, label) {
         if (!url) return `<span class="missing">${escapeHtml(label)}: belum ada</span>`;
-        return `<a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${escapeHtml(label)}</a>`;
+        return `<a class="tiny-link" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${icon("file")}<span>${escapeHtml(label)}</span></a>`;
       }
 
       function renderAdminFolderLink(url) {
         if (!url) return '<span class="missing">Folder belum ada</span>';
-        return `<a class="folder-action" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">Buka Folder Drive</a>`;
+        return `<a class="folder-action" target="_blank" rel="noopener noreferrer" href="${escapeAttr(url)}">${icon("folder")}<span>Buka Folder Drive</span></a>`;
       }
 
       function renderPendingAccess(records) {
@@ -1568,8 +1987,8 @@
                     <td>${escapeHtml(formatDateTime(record.requestedAt))}</td>
                     <td>
                       <div class="action-row">
-                        <button class="btn primary" type="button" onclick="reviewAccess('${escapeAttr(record.email)}', 'APPROVED')">Setujui</button>
-                        <button class="btn" type="button" onclick="reviewAccess('${escapeAttr(record.email)}', 'DENIED')">Tolak</button>
+                        <button class="btn primary" type="button" onclick="reviewAccess('${escapeAttr(record.email)}', 'APPROVED')">${icon("check-circle")}<span>Setujui</span></button>
+                        <button class="btn" type="button" onclick="reviewAccess('${escapeAttr(record.email)}', 'DENIED')">${icon("trash")}<span>Tolak</span></button>
                       </div>
                     </td>
                   </tr>
@@ -1625,7 +2044,7 @@
                     <td>${escapeHtml(record.reviewedBy || "-")}</td>
                     <td>${escapeHtml(formatDateTime(record.reviewedAt))}</td>
                     <td>
-                      <button class="btn compact" type="button" onclick="deleteAccess('${escapeAttr(record.email)}')">Hapus</button>
+                      <button class="btn compact" type="button" onclick="deleteAccess('${escapeAttr(record.email)}')">${icon("trash")}<span>Hapus</span></button>
                     </td>
                   </tr>
                 `)
@@ -1725,7 +2144,7 @@
           .map((item) => `
             <div class="notification-item ${item.isRead ? "" : "unread"}">
               <div class="notification-head">
-                <strong>${escapeHtml(item.message || "Notifikasi")}</strong>
+                <strong style="display:flex;align-items:center;gap:8px;">${icon("bell")}${escapeHtml(item.message || "Notifikasi")}</strong>
                 <span class="status ${item.isRead ? "done" : "proses"}">${escapeHtml(item.isRead ? "Sudah Dibaca" : "Baru")}</span>
               </div>
               <div class="hint">${escapeHtml(item.eventName || "-")} | ${escapeHtml(item.hpsName || "-")}</div>
