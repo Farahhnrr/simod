@@ -118,6 +118,15 @@
         backdrop-filter: blur(18px);
       }
 
+      .header-plain {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        backdrop-filter: none;
+        padding: 0;
+      }
+
       .header,
       .card {
         padding: 22px;
@@ -210,10 +219,14 @@
       }
 
       .nav {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 10px;
-        flex-wrap: wrap;
         margin-top: 14px;
+      }
+
+      .nav > * {
+        min-width: 0;
       }
 
       .nav a,
@@ -222,32 +235,52 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        border: 1px solid var(--line);
+        width: 100%;
+        border: 1px solid rgba(49, 69, 55, 0.12);
         border-radius: 999px;
-        padding: 10px 15px;
+        padding: 11px 16px;
         text-decoration: none;
-        background: rgba(255, 255, 255, 0.74);
-        color: var(--text);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 250, 247, 0.9));
+        color: var(--brand-strong);
         font: inherit;
         cursor: pointer;
         font-size: 13px;
         font-weight: 700;
-        transition: background 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+        letter-spacing: -0.01em;
+        box-shadow:
+          0 10px 24px rgba(42, 52, 40, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        transition: background 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
       }
 
       .nav a:hover,
       .btn:hover {
-        background: rgba(95, 114, 95, 0.08);
-        border-color: var(--line-strong);
+        background: linear-gradient(180deg, rgba(248, 251, 248, 0.98), rgba(242, 247, 242, 0.96));
         transform: translateY(-1px);
-        box-shadow: 0 10px 24px rgba(42, 52, 40, 0.08);
+        box-shadow:
+          0 14px 28px rgba(42, 52, 40, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.92);
       }
 
       .btn.primary {
-        background: linear-gradient(180deg, #5f725f, #314537);
+        background: linear-gradient(180deg, rgba(95, 114, 95, 0.94), rgba(49, 69, 55, 0.98));
         color: #f8fdfa;
-        border-color: transparent;
-        box-shadow: 0 16px 32px rgba(49, 69, 55, 0.22);
+        border-color: rgba(49, 69, 55, 0.14);
+        box-shadow:
+          0 14px 28px rgba(49, 69, 55, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      }
+
+      .btn.primary:hover {
+        filter: brightness(1.05);
+        box-shadow:
+          0 18px 34px rgba(49, 69, 55, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      }
+
+      .nav .profile-chip {
+        width: 100%;
+        justify-content: center;
       }
 
       .grid {
@@ -543,8 +576,11 @@
         gap: 10px;
         padding: 10px 14px;
         border-radius: 999px;
-        border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.84);
+        border: 1px solid rgba(49, 69, 55, 0.12);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 250, 247, 0.88));
+        box-shadow:
+          0 10px 24px rgba(42, 52, 40, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.82);
         font-size: 13px;
         font-weight: 700;
       }
@@ -558,6 +594,7 @@
         width: 44px;
         height: 44px;
         padding: 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(244, 248, 244, 0.92));
       }
 
       .bell-badge {
@@ -917,6 +954,11 @@
           border-radius: 20px;
         }
 
+        .header-plain {
+          padding: 0;
+          border-radius: 0;
+        }
+
         .hero-banner {
           border-radius: 22px;
         }
@@ -1036,6 +1078,11 @@
         .card {
           padding: 14px;
           border-radius: 18px;
+        }
+
+        .header-plain {
+          padding: 0;
+          border-radius: 0;
         }
 
         h2 {
@@ -1208,7 +1255,7 @@
       </symbol>
     </svg>
     <div class="container">
-      <section class="header">
+      <section class="header-plain">
         <div class="hero-banner">
           <img src="<?!= bannerDataUri ?>" alt="Banner SIMOD HPS" />
         </div>
