@@ -16,6 +16,7 @@ function renderPage_(fileName, title) {
   template.appBaseUrl = appBaseUrl;
   template.userUiUrl = appBaseUrl || '';
   template.adminUiUrl = appBaseUrl ? appBaseUrl + '?page=admin' : '?page=admin';
+  template.bannerDataUri = typeof BANNER_PNG_DATA_URI !== 'undefined' ? BANNER_PNG_DATA_URI : '';
 
   return template.evaluate()
     .setTitle(title)
