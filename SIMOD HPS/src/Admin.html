@@ -385,12 +385,17 @@
       }
 
       .status {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 999px;
-        padding: 5px 10px;
-        font-size: 11px;
+        min-height: 22px;
+        padding: 4px 8px;
+        font-size: 10px;
         font-weight: 800;
         letter-spacing: 0.03em;
+        line-height: 1;
+        white-space: nowrap;
       }
 
       .status.ready {
@@ -473,7 +478,7 @@
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
-        font-size: 14px;
+        font-size: 11px;
         overflow: hidden;
         border-radius: 18px;
         border: 1px solid var(--line);
@@ -482,6 +487,7 @@
 
       .table-scroll {
         width: 100%;
+        max-width: 100%;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
@@ -498,26 +504,44 @@
         min-width: 240px;
       }
 
+      .hps-table th:nth-child(2),
+      .hps-table td:nth-child(2),
       .hps-table th:nth-child(3),
       .hps-table td:nth-child(3) {
         width: 18%;
         min-width: 180px;
+        white-space: nowrap;
+        overflow-wrap: normal;
+        word-break: normal;
+      }
+
+      .hps-table th:nth-child(5),
+      .hps-table td:nth-child(5) {
+        min-width: 84px;
+      }
+
+      .hps-table th:nth-child(6),
+      .hps-table td:nth-child(6),
+      .hps-table th:nth-child(7),
+      .hps-table td:nth-child(7) {
+        min-width: 112px;
       }
 
       th,
       td {
-        padding: 14px 12px;
+        padding: 9px 7px;
         border-bottom: 1px solid var(--line);
         text-align: left;
         vertical-align: top;
       }
 
       th {
-        font-size: 11px;
+        font-size: 10px;
         color: var(--muted);
         text-transform: uppercase;
         letter-spacing: 0.12em;
         background: rgba(246, 249, 253, 0.96);
+        white-space: nowrap;
       }
 
       tbody tr {
@@ -540,19 +564,26 @@
       .list-controls {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: wrap;
-        margin-top: 12px;
+        margin-top: 10px;
       }
 
       .list-summary {
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
+      }
+
+      #pendingAccessWrap,
+      #accessWrap {
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
       }
 
       .list-actions {
         display: flex;
-        gap: 8px;
+        gap: 6px;
         flex-wrap: wrap;
       }
 
@@ -668,9 +699,11 @@
 
       .notification-item {
         border: 1px solid var(--line);
-        border-radius: 20px;
-        padding: 15px;
+        border-radius: 16px;
+        padding: 12px;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 250, 248, 0.95));
+        font-size: 11px;
+        line-height: 1.25;
       }
 
       .notification-item.unread {
@@ -682,35 +715,37 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
+        gap: 8px;
         margin-bottom: 6px;
       }
 
       .notification-meta {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 8px;
+        gap: 6px;
+        margin-top: 6px;
       }
 
       .row-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 4px;
+        align-items: center;
       }
 
       .tiny-link {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 7px 11px;
+        padding: 6px 9px;
         border-radius: 999px;
         border: 1px solid var(--line);
         background: rgba(255, 255, 255, 0.92);
         color: var(--text);
         text-decoration: none;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
+        line-height: 1.1;
       }
 
       .tiny-link:hover {
@@ -762,15 +797,15 @@
       .folder-action {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        min-width: 138px;
+        gap: 6px;
+        min-width: 104px;
         justify-content: center;
-        padding: 9px 12px;
-        border-radius: 14px;
+        padding: 7px 10px;
+        border-radius: 12px;
         border: 1px solid rgba(95, 114, 95, 0.18);
         background: linear-gradient(180deg, rgba(245, 248, 245, 1), rgba(255, 255, 255, 0.98));
         color: var(--brand-strong);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.02em;
         text-decoration: none;
@@ -778,7 +813,7 @@
 
       .missing {
         color: rgba(97, 120, 109, 0.76);
-        font-size: 12px;
+        font-size: 11px;
       }
 
       .modal-shell {
@@ -841,14 +876,14 @@
 
       .event-list {
         display: grid;
-        gap: 8px;
-        margin-top: 10px;
+        gap: 6px;
+        margin-top: 8px;
       }
 
       .event-item {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
+        gap: 8px;
         align-items: stretch;
       }
 
@@ -863,33 +898,34 @@
         border: 1px solid var(--line);
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 247, 252, 0.92));
         border-radius: 18px;
-        padding: 14px 16px;
+        padding: 11px 13px;
         color: var(--text);
         cursor: pointer;
+        font-size: 13px;
         transition: border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
       }
 
       .event-title-row {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
       }
 
       .event-main-icon {
-        width: 40px;
-        height: 40px;
+        width: 34px;
+        height: 34px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 14px;
+        border-radius: 12px;
         background: linear-gradient(180deg, rgba(244, 248, 244, 0.98), rgba(255, 255, 255, 0.98));
         color: var(--brand-strong);
         border: 1px solid rgba(95, 114, 95, 0.16);
       }
 
       .event-main-icon .icon {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
       }
 
       .event-title-copy {
@@ -942,6 +978,7 @@
         align-items: center;
         gap: 8px;
         margin-top: 8px;
+        font-size: 11px;
       }
 
       .event-actions {
@@ -953,6 +990,14 @@
         padding: 8px 12px;
         font-size: 13px;
         box-shadow: none;
+      }
+
+      .btn.icon-only {
+        width: 34px;
+        min-width: 34px;
+        height: 34px;
+        padding: 0;
+        border-radius: 10px;
       }
 
       @media (max-width: 760px) {
@@ -1937,8 +1982,8 @@
                       <td>${renderAdminFolderLink(pkg.packageFolderUrl)}</td>
                       <td>
                         <div class="row-actions">
-                          <button class="btn" type="button" onclick="openAdminHpsModalForPackage('${escapeAttr(pkg.packageId)}')">
-                            ${icon("upload")}<span>Input Admin</span>
+                          <button class="btn icon-only" type="button" onclick="openAdminHpsModalForPackage('${escapeAttr(pkg.packageId)}')" title="Input Admin" aria-label="Input Admin">
+                            ${icon("upload")}
                           </button>
                         </div>
                       </td>
