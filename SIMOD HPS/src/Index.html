@@ -32,6 +32,11 @@
         box-sizing: border-box;
       }
 
+      img,
+      svg {
+        max-width: 100%;
+      }
+
       body {
         position: relative;
         margin: 0;
@@ -103,12 +108,21 @@
       }
 
       .container {
-        width: min(1440px, calc(100% - 32px));
+        width: 100%;
+        max-width: 1440px;
+        padding: 0 16px;
         margin: 28px auto 40px;
         display: grid;
         gap: 18px;
         position: relative;
         z-index: 1;
+      }
+
+      .container > *,
+      .layout > *,
+      .stack > * {
+        min-width: 0;
+        width: 100%;
       }
 
       .header,
@@ -580,6 +594,21 @@
         flex: 1 1 auto;
       }
 
+      .event-title-copy,
+      .selection-card strong,
+      .profile-chip span,
+      .mono,
+      td,
+      th,
+      .hint,
+      .message,
+      .notification-item,
+      .row,
+      .doc-upload-label {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
       .event-arrow {
         color: var(--muted);
       }
@@ -1007,7 +1036,9 @@
         }
 
         .container {
-          width: calc(100% - 20px);
+          width: 100%;
+          max-width: 100%;
+          padding: 0 10px;
           margin: 12px auto 24px;
           gap: 12px;
         }
