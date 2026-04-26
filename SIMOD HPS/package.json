@@ -9,7 +9,8 @@
     "pull": "clasp pull",
     "push": "clasp push",
     "open": "clasp open",
-    "deploy:webapp": "clasp deploy --description \"webapp\""
+    "deploy:webapp": "clasp deploy --description \"webapp\"",
+    "deploy:auto": "node scripts/deploy.js"
   },
   "devDependencies": {
     "@google/clasp": "^3.3.0"
