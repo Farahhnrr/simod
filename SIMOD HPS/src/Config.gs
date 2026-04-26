@@ -6,13 +6,13 @@ const CONFIG = {
   EMAIL_LOG_SHEET_NAME: 'Email_Log',
 
   // Static IDs (recommended). Leave empty to use Script Properties.
-  STATIC_SHEET_ID: '1AO0-M0LdIudc6_CKLXTdVL9XfclB3IOqfGqg3w0pbWc',
-  STATIC_DRIVE_FOLDER_ID: '1ZwoMKvIhl1rJJH2vNHXPjMRDmBPmPSFW',
+  STATIC_SHEET_ID: '1i3avH3KDyws9X7HbQ8Oyv64txNDsbwFxcbAMv2-6-E0',
+  STATIC_DRIVE_FOLDER_ID: '1sX8Rd3gKXfdtUgVppITrdDRBZLLpbivB',
   // Used by the simplified admin page login. Change this before deploying.
-  ADMIN_ACCESS_CODE: '202020',
-  EMAIL_NOTIFICATIONS_ENABLED: true,
-  EMAIL_NOTIFY_NEW_EDUCATION: true,
-  EMAIL_NOTIFY_HPS_READY: true,
+  ADMIN_ACCESS_CODE: '5421454',
+  EMAIL_NOTIFICATIONS_ENABLED: false,
+  EMAIL_NOTIFY_NEW_EDUCATION: false,
+  EMAIL_NOTIFY_HPS_READY: false,
   APP_DISPLAY_NAME: 'SIMOD HPS',
 
   EVENT_HEADERS: [

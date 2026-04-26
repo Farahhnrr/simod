@@ -11,9 +11,22 @@ const DEFAULT_SOURCES = {
   config: path.join(PROJECT_ROOT, "prepared", "Config.gs"),
 };
 
+function resolveCommand(cmd) {
+  if (process.platform !== "win32") {
+    return cmd;
+  }
+
+  if (cmd === "npm" || cmd === "npx") {
+    return `${cmd}.cmd`;
+  }
+
+  return cmd;
+}
+
 function run(cmd, args) {
-  console.log(`\n> ${cmd} ${args.join(" ")}`);
-  const result = spawnSync(cmd, args, {
+  const resolvedCmd = resolveCommand(cmd);
+  console.log(`\n> ${resolvedCmd} ${args.join(" ")}`);
+  const result = spawnSync(resolvedCmd, args, {
     cwd: PROJECT_ROOT,
     stdio: "inherit",
     shell: false,
@@ -24,7 +37,7 @@ function run(cmd, args) {
   }
 
   if (result.status !== 0) {
-    throw new Error(`${cmd} exited with code ${result.status}`);
+    throw new Error(`${resolvedCmd} exited with code ${result.status}`);
   }
 }
 
